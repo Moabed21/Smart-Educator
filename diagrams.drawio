@@ -1,0 +1,206 @@
+<mxfile host="65bd71144e">
+    <diagram id="-TcybztBU468V69R5p9I" name="Page-1">
+        <mxGraphModel dx="2122" dy="2345" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="7" style="edgeStyle=none;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="2" target="6" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="2" value="input: educational context" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="680" y="80" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="18" value="" style="edgeStyle=none;html=1;" parent="1" source="3" target="17" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="3" value="Evaluate the quality and correctness of the previous steps" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="80" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="10" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="4" target="3" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="Link generated questions with related outcomes" style="rounded=1;whiteSpace=wrap;html=1;direction=south;" parent="1" vertex="1">
+                    <mxGeometry x="230" y="80" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="9" style="edgeStyle=none;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="5" target="4" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" value="Generate questions based on the context" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="380" y="80" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="8" style="edgeStyle=none;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="6" target="5" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="6" value="Extract/Generate learning outcomes from input context" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="530" y="80" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="14" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="13" target="6" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="13" value="parsing" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="540" y="-30" width="100" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="23" value="" style="edgeStyle=none;html=1;" parent="1" source="17" target="22" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="17" value="Clean and structure the accepted data" style="whiteSpace=wrap;html=1;rounded=1;" parent="1" vertex="1">
+                    <mxGeometry x="-70" y="80" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="20" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="19" target="17" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="19" value="output" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="-60" y="-30" width="100" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="25" value="" style="edgeStyle=none;html=1;" parent="1" source="22" target="24" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="22" value="Use structured data to fine-tune a simple embedding model" style="whiteSpace=wrap;html=1;rounded=1;" parent="1" vertex="1">
+                    <mxGeometry x="-70" y="900" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="24" value="question recommendation based on the fine-tuned model" style="whiteSpace=wrap;html=1;rounded=1;" parent="1" vertex="1">
+                    <mxGeometry x="155" y="900" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="28" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="26" target="3" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="26" value="evaluation" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="85" y="-30" width="110" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="34" value="" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="43" target="33">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="45" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="30" target="43">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="30" value="&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;Imagined implementation&lt;/span&gt;" style="shape=hexagon;perimeter=hexagonPerimeter2;whiteSpace=wrap;html=1;fixedSize=1;" vertex="1" parent="1">
+                    <mxGeometry x="410" y="180" width="120" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="36" value="" style="edgeStyle=none;html=1;" edge="1" parent="1" source="33" target="35">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="33" value="input is entered as JSON&amp;nbsp;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="410" y="360" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="38" value="" style="edgeStyle=none;html=1;" edge="1" parent="1" source="35" target="37">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="35" value="apply feature extraction methods" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="410" y="440" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="40" value="" style="edgeStyle=none;html=1;" edge="1" parent="1" source="37" target="39">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="37" value="Using gemini api to generate enough questions" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="410" y="520" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="42" value="" style="edgeStyle=none;html=1;" edge="1" parent="1" source="39" target="41">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="39" value="use fine tuned embeddings to push questions in vector database" style="whiteSpace=wrap;html=1;rounded=1;" vertex="1" parent="1">
+                    <mxGeometry x="410" y="600" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="46" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="41" target="48">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="530" y="790" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="51" value="if positive" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="46">
+                    <mxGeometry x="-0.0454" y="2" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="47" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="41" target="50">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="410" y="790" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="52" value="if negative" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="47">
+                    <mxGeometry x="0.0438" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="41" value="evaluations using methods like(LLM as a judge, rogue/bert score)" style="whiteSpace=wrap;html=1;rounded=1;" vertex="1" parent="1">
+                    <mxGeometry x="410" y="690" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="43" value="build pydantic data constraints (used in every input and output)" style="whiteSpace=wrap;html=1;rounded=1;" vertex="1" parent="1">
+                    <mxGeometry x="410" y="280" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="48" value="store it in relational db(Postgres)" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="520" y="800" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="50" value="log reason then discard or flag for review" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="280" y="800" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="53" value="feeds training data (closes the loop)" style="edgeStyle=none;html=1;dashed=1;strokeColor=#82b366;fontColor=#82b366;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="48" target="22">
+                    <mxGeometry x="-0.7172" y="39" relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="440" y="870"/>
+                            <mxPoint x="150" y="870"/>
+                        </Array>
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="54" value="Orchestration: FastAPI (API layer) + LangGraph (pipeline engine)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;" vertex="1" parent="1">
+                    <mxGeometry x="660" y="180" width="190" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="55" value="API Endpoints (FastAPI)" style="swimlane;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;" vertex="1" parent="1">
+                    <mxGeometry x="660" y="270" width="190" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="56" value="POST /generate  →  trigger question generation" style="rounded=1;whiteSpace=wrap;html=1;align=left;" vertex="1" parent="55">
+                    <mxGeometry x="10" y="40" width="170" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="57" value="GET  /recommend →  get recommended questions" style="rounded=1;whiteSpace=wrap;html=1;align=left;" vertex="1" parent="55">
+                    <mxGeometry x="10" y="80" width="170" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="58" value="POST /evaluate  →  run evaluation on questions" style="rounded=1;whiteSpace=wrap;html=1;align=left;" vertex="1" parent="55">
+                    <mxGeometry x="10" y="120" width="170" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="59" value="Storage Layer" style="swimlane;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;startSize=30;" vertex="1" parent="1">
+                    <mxGeometry x="660" y="460" width="190" height="240" as="geometry"/>
+                </mxCell>
+                <mxCell id="67" style="edgeStyle=none;html=1;" edge="1" parent="59" source="60">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="95" y="40" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="60" value="PostgreSQL&#xa;questions, outcomes, metadata" style="shape=cylinder3;whiteSpace=wrap;html=1;" vertex="1" parent="59">
+                    <mxGeometry x="20" y="40" width="150" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="61" value="ChromaDB / pgvector&#xa;vector similarity search" style="shape=cylinder3;whiteSpace=wrap;html=1;" vertex="1" parent="59">
+                    <mxGeometry x="20" y="105" width="150" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="62" value="Redis&#xa;cache (avoid re-generating same input)" style="shape=cylinder3;whiteSpace=wrap;html=1;" vertex="1" parent="59">
+                    <mxGeometry x="20" y="170" width="150" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="63" value="Monitoring &amp; Observability&#xa;━━━━━━━━━━━━━━━━━━━━━━━━&#xa;• Log all generation attempts&#xa;• Track avg quality score over time&#xa;• Track rejection rate&#xa;• Alert on model quality degradation" style="rounded=1;whiteSpace=wrap;html=1;align=left;fillColor=#f0f0f0;strokeColor=#666666;" vertex="1" parent="1">
+                    <mxGeometry x="55" y="640" width="290" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="64" value="Question Metadata Schema&#xa;━━━━━━━━━━━━━━━━━━━━━━━━&#xa;• Bloom&#39;s level (1=Remember → 6=Create)&#xa;• Type: MCQ / True-False / Open-ended&#xa;• Difficulty: Easy / Medium / Hard&#xa;• Subject &amp; topic tags&#xa;• Linked learning outcome ID" style="rounded=1;whiteSpace=wrap;html=1;align=left;fillColor=#fff2cc;strokeColor=#d6b656;arcSize=13;" vertex="1" parent="1">
+                    <mxGeometry x="60" y="310" width="300" height="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="65" value="Cold-Start Strategy&#xa;━━━━━━━━━━━━━━━━━━━━━━━━&#xa;Phase 1 (no data yet):&#xa;  Use text-embedding-004 (Google)&#xa;  No fine-tuning needed&#xa;&#xa;Phase 2 (after 500+ Q&amp;A pairs):&#xa;  Fine-tune embedding model&#xa;  on your curated dataset" style="rounded=1;whiteSpace=wrap;html=1;align=left;fillColor=#dae8fc;strokeColor=#6c8ebf;arcSize=11;" vertex="1" parent="1">
+                    <mxGeometry x="60" y="470" width="300" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="66" value="stores vectors" style="edgeStyle=none;html=1;dashed=1;strokeColor=#d6b656;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="39" target="59">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="68" value="extraction" style="ellipse;whiteSpace=wrap;html=1;direction=west;" vertex="1" parent="1">
+                    <mxGeometry x="390" y="-30" width="100" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="69" style="edgeStyle=none;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="1" source="68">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="438.6" y="18.26" as="sourcePoint"/>
+                        <mxPoint x="440" y="80" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="71" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="70" target="4">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="70" value="linking" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="235" y="-30" width="110" height="50" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
