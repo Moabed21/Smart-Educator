@@ -1,204 +1,291 @@
 <mxfile host="65bd71144e">
     <diagram id="-TcybztBU468V69R5p9I" name="Page-1">
-        <mxGraphModel dx="2122" dy="2345" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+        <mxGraphModel dx="2948" dy="2711" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" background="none" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
-                <mxCell id="7" style="edgeStyle=none;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="2" target="6" edge="1">
+                <mxCell id="7" style="edgeStyle=none;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;rounded=0;" parent="1" source="2" target="6" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="2" value="input: educational context" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="680" y="80" width="120" height="60" as="geometry"/>
-                </mxCell>
-                <mxCell id="18" value="" style="edgeStyle=none;html=1;" parent="1" source="3" target="17" edge="1">
+                <mxCell id="95" style="edgeStyle=none;html=1;exitX=0.75;exitY=0;exitDx=0;exitDy=0;entryX=0.75;entryY=1;entryDx=0;entryDy=0;fontColor=#000000;" parent="1" source="2" target="86" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="3" value="Evaluate the quality and correctness of the previous steps" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                <mxCell id="2" value="input: educational context" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="730" y="80" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="18" value="if positive" style="edgeStyle=none;html=1;rounded=0;" parent="1" source="3" target="17" edge="1">
+                    <mxGeometry x="-0.3333" y="-40" relative="1" as="geometry">
+                        <mxPoint x="1" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="3" value="Evaluate the quality and correctness of the previous steps" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="80" y="80" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="10" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="4" target="3" edge="1">
+                <mxCell id="10" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;rounded=0;" parent="1" source="4" target="3" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="4" value="Link generated questions with related outcomes" style="rounded=1;whiteSpace=wrap;html=1;direction=south;" parent="1" vertex="1">
+                <mxCell id="4" value="Link generated questions with related outcomes" style="rounded=0;whiteSpace=wrap;html=1;direction=south;" parent="1" vertex="1">
                     <mxGeometry x="230" y="80" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="9" style="edgeStyle=none;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="5" target="4" edge="1">
+                <mxCell id="9" style="edgeStyle=none;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;rounded=0;" parent="1" source="5" target="4" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="5" value="Generate questions based on the context" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                <mxCell id="5" value="Generate questions based on the context" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="380" y="80" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="8" style="edgeStyle=none;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="6" target="5" edge="1">
+                <mxCell id="8" style="edgeStyle=none;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;rounded=0;" parent="1" source="6" target="5" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="6" value="Extract/Generate learning outcomes from input context" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                <mxCell id="6" value="Extract/Generate learning outcomes from input context" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="530" y="80" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="14" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="13" target="6" edge="1">
+                <mxCell id="14" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;rounded=0;" parent="1" source="13" target="6" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="13" value="parsing" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                <mxCell id="13" value="parsing" style="ellipse;whiteSpace=wrap;html=1;rounded=0;" parent="1" vertex="1">
                     <mxGeometry x="540" y="-30" width="100" height="50" as="geometry"/>
                 </mxCell>
-                <mxCell id="23" value="" style="edgeStyle=none;html=1;" parent="1" source="17" target="22" edge="1">
+                <mxCell id="23" value="" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;rounded=0;" parent="1" source="17" target="96" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="17" value="Clean and structure the accepted data" style="whiteSpace=wrap;html=1;rounded=1;" parent="1" vertex="1">
+                <mxCell id="17" value="Clean and structure the accepted data" style="whiteSpace=wrap;html=1;rounded=0;" parent="1" vertex="1">
                     <mxGeometry x="-70" y="80" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="20" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="19" target="17" edge="1">
+                <mxCell id="20" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;rounded=0;" parent="1" source="19" target="17" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="19" value="output" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                <mxCell id="19" value="accepted output" style="ellipse;whiteSpace=wrap;html=1;rounded=0;" parent="1" vertex="1">
                     <mxGeometry x="-60" y="-30" width="100" height="50" as="geometry"/>
                 </mxCell>
-                <mxCell id="25" value="" style="edgeStyle=none;html=1;" parent="1" source="22" target="24" edge="1">
+                <mxCell id="25" value="" style="edgeStyle=none;html=1;rounded=0;" parent="1" source="22" target="24" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="22" value="Use structured data to fine-tune a simple embedding model" style="whiteSpace=wrap;html=1;rounded=1;" parent="1" vertex="1">
-                    <mxGeometry x="-70" y="900" width="120" height="60" as="geometry"/>
+                <mxCell id="22" value="Use structured data to fine-tune a simple embedding model" style="whiteSpace=wrap;html=1;rounded=0;" parent="1" vertex="1">
+                    <mxGeometry x="-70" y="935" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="24" value="question recommendation based on the fine-tuned model" style="whiteSpace=wrap;html=1;rounded=1;" parent="1" vertex="1">
-                    <mxGeometry x="155" y="900" width="120" height="60" as="geometry"/>
+                <mxCell id="24" value="question recommendation based on the fine-tuned model" style="whiteSpace=wrap;html=1;rounded=0;" parent="1" vertex="1">
+                    <mxGeometry x="-260" y="935" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="28" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="26" target="3" edge="1">
+                <mxCell id="28" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;rounded=0;" parent="1" source="26" target="3" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="26" value="evaluation" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                <mxCell id="26" value="evaluation" style="ellipse;whiteSpace=wrap;html=1;rounded=0;" parent="1" vertex="1">
                     <mxGeometry x="85" y="-30" width="110" height="50" as="geometry"/>
                 </mxCell>
-                <mxCell id="34" value="" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="43" target="33">
+                <mxCell id="34" value="" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;rounded=0;" parent="1" source="43" target="33" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="45" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="30" target="43">
+                <mxCell id="45" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;rounded=0;" parent="1" source="30" target="43" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="30" value="&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;Imagined implementation&lt;/span&gt;" style="shape=hexagon;perimeter=hexagonPerimeter2;whiteSpace=wrap;html=1;fixedSize=1;" vertex="1" parent="1">
+                <mxCell id="30" value="&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;Imagined implementation&lt;/span&gt;" style="shape=hexagon;perimeter=hexagonPerimeter2;whiteSpace=wrap;html=1;fixedSize=1;rounded=0;" parent="1" vertex="1">
                     <mxGeometry x="410" y="180" width="120" height="80" as="geometry"/>
                 </mxCell>
-                <mxCell id="36" value="" style="edgeStyle=none;html=1;" edge="1" parent="1" source="33" target="35">
+                <mxCell id="36" value="" style="edgeStyle=none;html=1;rounded=0;" parent="1" source="33" target="35" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="33" value="input is entered as JSON&amp;nbsp;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                <mxCell id="33" value="input is entered as JSON&amp;nbsp;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="410" y="360" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="38" value="" style="edgeStyle=none;html=1;" edge="1" parent="1" source="35" target="37">
+                <mxCell id="38" value="" style="edgeStyle=none;html=1;rounded=0;" parent="1" source="35" target="37" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="35" value="apply feature extraction methods" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                <mxCell id="35" value="Extract Learning Outcomes from Context (Gemini)" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="410" y="440" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="40" value="" style="edgeStyle=none;html=1;" edge="1" parent="1" source="37" target="39">
+                <mxCell id="40" value="" style="edgeStyle=none;html=1;rounded=0;" parent="1" source="37" target="41" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="37" value="Using gemini api to generate enough questions" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                <mxCell id="37" value="Generate Questions, Answers &amp; Explanations (Gemini)" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="410" y="520" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="42" value="" style="edgeStyle=none;html=1;" edge="1" parent="1" source="39" target="41">
+                <mxCell id="42" value="" style="edgeStyle=none;html=1;rounded=0;" parent="1" source="48" target="102" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="39" value="use fine tuned embeddings to push questions in vector database" style="whiteSpace=wrap;html=1;rounded=1;" vertex="1" parent="1">
+                <mxCell id="39" value="use fine tuned embeddings to push questions in vector database" style="whiteSpace=wrap;html=1;rounded=0;" parent="1" vertex="1">
                     <mxGeometry x="410" y="600" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="46" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="41" target="48">
+                <mxCell id="46" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;rounded=0;" parent="1" source="41" target="48" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <mxPoint x="530" y="790" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="51" value="if positive" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="46">
+                <mxCell id="51" value="if positive" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];rounded=0;" parent="46" vertex="1" connectable="0">
                     <mxGeometry x="-0.0454" y="2" relative="1" as="geometry">
                         <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="47" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="41" target="50">
+                <mxCell id="47" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;rounded=0;" parent="1" source="41" target="50" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <mxPoint x="410" y="790" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="52" value="if negative" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="47">
+                <mxCell id="52" value="if negative" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];rounded=0;" parent="47" vertex="1" connectable="0">
                     <mxGeometry x="0.0438" relative="1" as="geometry">
                         <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="41" value="evaluations using methods like(LLM as a judge, rogue/bert score)" style="whiteSpace=wrap;html=1;rounded=1;" vertex="1" parent="1">
-                    <mxGeometry x="410" y="690" width="120" height="60" as="geometry"/>
+                <mxCell id="41" value="LLM-as-Judge Evaluation (Gemini):&#10;• Context grounding&#10;• Answer correctness&#10;• Explanation correctness&#10;• LO alignment&#10;• Clarity &amp; difficulty&#10;• Question type validity" style="whiteSpace=wrap;html=1;rounded=0;" parent="1" vertex="1">
+                    <mxGeometry x="410" y="670" width="120" height="150" as="geometry"/>
                 </mxCell>
-                <mxCell id="43" value="build pydantic data constraints (used in every input and output)" style="whiteSpace=wrap;html=1;rounded=1;" vertex="1" parent="1">
+                <mxCell id="43" value="build pydantic data constraints (used in every input and output)" style="whiteSpace=wrap;html=1;rounded=0;" parent="1" vertex="1">
                     <mxGeometry x="410" y="280" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="48" value="store it in relational db(Postgres)" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-                    <mxGeometry x="520" y="800" width="120" height="60" as="geometry"/>
+                <mxCell id="48" value="store it in relational db(Postgres)" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="590" y="830" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="50" value="log reason then discard or flag for review" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-                    <mxGeometry x="280" y="800" width="120" height="60" as="geometry"/>
+                <mxCell id="50" value="log reason then discard or flag for review" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="200" y="830" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="53" value="feeds training data (closes the loop)" style="edgeStyle=none;html=1;dashed=1;strokeColor=#82b366;fontColor=#82b366;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="48" target="22">
-                    <mxGeometry x="-0.7172" y="39" relative="1" as="geometry">
+                <mxCell id="53" value="&lt;font color=&quot;#ffffff&quot;&gt;feeds fine-tuning (closes the loop)&lt;/font&gt;" style="edgeStyle=none;html=1;dashed=1;strokeColor=#82b366;fontColor=#000000;exitX=0;exitY=0.5;exitDx=0;exitDy=0;rounded=0;" parent="1" source="102" target="22" edge="1">
+                    <mxGeometry x="-0.6964" y="20" relative="1" as="geometry">
                         <Array as="points">
-                            <mxPoint x="440" y="870"/>
-                            <mxPoint x="150" y="870"/>
+                            <mxPoint x="460" y="1020"/>
+                            <mxPoint x="150" y="1020"/>
                         </Array>
                         <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="54" value="Orchestration: FastAPI (API layer) + LangGraph (pipeline engine)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;" vertex="1" parent="1">
-                    <mxGeometry x="660" y="180" width="190" height="60" as="geometry"/>
+                <mxCell id="54" value="&lt;font color=&quot;#000000&quot;&gt;Orchestration: FastAPI (API layer) + LangGraph (pipeline engine)&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="675" y="200" width="190" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="55" value="API Endpoints (FastAPI)" style="swimlane;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;" vertex="1" parent="1">
-                    <mxGeometry x="660" y="270" width="190" height="160" as="geometry"/>
+                <mxCell id="55" value="API Endpoints (FastAPI)" style="swimlane;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;rounded=0;fontColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="660" y="270" width="220" height="280" as="geometry"/>
                 </mxCell>
-                <mxCell id="56" value="POST /generate  →  trigger question generation" style="rounded=1;whiteSpace=wrap;html=1;align=left;" vertex="1" parent="55">
-                    <mxGeometry x="10" y="40" width="170" height="30" as="geometry"/>
+                <mxCell id="56" value="GET  /health  →  health check" style="rounded=0;whiteSpace=wrap;html=1;align=left;" parent="55" vertex="1">
+                    <mxGeometry x="10" y="40" width="200" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="57" value="GET  /recommend →  get recommended questions" style="rounded=1;whiteSpace=wrap;html=1;align=left;" vertex="1" parent="55">
-                    <mxGeometry x="10" y="80" width="170" height="30" as="geometry"/>
+                <mxCell id="57" value="POST /dataset/generate  →  generate LOs + questions" style="rounded=0;whiteSpace=wrap;html=1;align=left;" parent="55" vertex="1">
+                    <mxGeometry x="10" y="78" width="200" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="58" value="POST /evaluate  →  run evaluation on questions" style="rounded=1;whiteSpace=wrap;html=1;align=left;" vertex="1" parent="55">
-                    <mxGeometry x="10" y="120" width="170" height="30" as="geometry"/>
+                <mxCell id="58" value="POST /dataset/evaluate  →  evaluate questions" style="rounded=0;whiteSpace=wrap;html=1;align=left;" parent="55" vertex="1">
+                    <mxGeometry x="10" y="116" width="200" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="59" value="Storage Layer" style="swimlane;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;startSize=30;" vertex="1" parent="1">
-                    <mxGeometry x="660" y="460" width="190" height="240" as="geometry"/>
+                <mxCell id="105" value="GET  /dataset/export  →  export clean dataset" style="rounded=0;whiteSpace=wrap;html=1;align=left;" parent="55" vertex="1">
+                    <mxGeometry x="10" y="154" width="200" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="67" style="edgeStyle=none;html=1;" edge="1" parent="59" source="60">
+                <mxCell id="106" value="POST /training-pairs/build  →  build pairs" style="rounded=0;whiteSpace=wrap;html=1;align=left;" parent="55" vertex="1">
+                    <mxGeometry x="10" y="192" width="200" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="107" value="POST /recommendations/questions  →  recommend" style="rounded=0;whiteSpace=wrap;html=1;align=left;" parent="55" vertex="1">
+                    <mxGeometry x="10" y="230" width="200" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="59" value="Storage Layer" style="swimlane;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;startSize=30;rounded=0;fontColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="690" y="560" width="190" height="240" as="geometry"/>
+                </mxCell>
+                <mxCell id="67" style="edgeStyle=none;html=1;rounded=0;" parent="59" source="60" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <mxPoint x="95" y="40" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="60" value="PostgreSQL&#xa;questions, outcomes, metadata" style="shape=cylinder3;whiteSpace=wrap;html=1;" vertex="1" parent="59">
+                <mxCell id="60" value="PostgreSQL&#10;questions, outcomes, metadata" style="shape=cylinder3;whiteSpace=wrap;html=1;rounded=0;" parent="59" vertex="1">
                     <mxGeometry x="20" y="40" width="150" height="55" as="geometry"/>
                 </mxCell>
-                <mxCell id="61" value="ChromaDB / pgvector&#xa;vector similarity search" style="shape=cylinder3;whiteSpace=wrap;html=1;" vertex="1" parent="59">
+                <mxCell id="61" value="ChromaDB / pgvector&#10;vector similarity search" style="shape=cylinder3;whiteSpace=wrap;html=1;rounded=0;" parent="59" vertex="1">
                     <mxGeometry x="20" y="105" width="150" height="55" as="geometry"/>
                 </mxCell>
-                <mxCell id="62" value="Redis&#xa;cache (avoid re-generating same input)" style="shape=cylinder3;whiteSpace=wrap;html=1;" vertex="1" parent="59">
+                <mxCell id="62" value="Redis&#10;cache (avoid re-generating same input)" style="shape=cylinder3;whiteSpace=wrap;html=1;rounded=0;" parent="59" vertex="1">
                     <mxGeometry x="20" y="170" width="150" height="55" as="geometry"/>
                 </mxCell>
-                <mxCell id="63" value="Monitoring &amp; Observability&#xa;━━━━━━━━━━━━━━━━━━━━━━━━&#xa;• Log all generation attempts&#xa;• Track avg quality score over time&#xa;• Track rejection rate&#xa;• Alert on model quality degradation" style="rounded=1;whiteSpace=wrap;html=1;align=left;fillColor=#f0f0f0;strokeColor=#666666;" vertex="1" parent="1">
-                    <mxGeometry x="55" y="640" width="290" height="130" as="geometry"/>
+                <mxCell id="63" value="&lt;font color=&quot;#000000&quot;&gt;⚠️ Post-MVP: Monitoring &amp;amp; Observability&lt;br&gt;━━━━━━━━━━━━━━━━━━━━━━━━&lt;br&gt;• Log all generation attempts&lt;br&gt;• Track avg quality score over time&lt;br&gt;• Track rejection rate&lt;br&gt;• Alert on model quality degradation&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;fillColor=#f5f5f5;strokeColor=#999999;fontColor=#666666;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="640" width="290" height="130" as="geometry"/>
                 </mxCell>
-                <mxCell id="64" value="Question Metadata Schema&#xa;━━━━━━━━━━━━━━━━━━━━━━━━&#xa;• Bloom&#39;s level (1=Remember → 6=Create)&#xa;• Type: MCQ / True-False / Open-ended&#xa;• Difficulty: Easy / Medium / Hard&#xa;• Subject &amp; topic tags&#xa;• Linked learning outcome ID" style="rounded=1;whiteSpace=wrap;html=1;align=left;fillColor=#fff2cc;strokeColor=#d6b656;arcSize=13;" vertex="1" parent="1">
-                    <mxGeometry x="60" y="310" width="300" height="140" as="geometry"/>
+                <mxCell id="64" value="&lt;font color=&quot;#000000&quot;&gt;Question Metadata Schema&lt;br&gt;━━━━━━━━━━━━━━━━━━━━━━━━&lt;br&gt;• Bloom's level (1=Remember → 6=Create)&lt;br&gt;• Type: MCQ / True-False / Open-ended&lt;br&gt;• Difficulty: Easy / Medium / Hard&lt;br&gt;• Subject &amp;amp; topic tags&lt;br&gt;• Linked learning outcome ID&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;fillColor=#fff2cc;strokeColor=#d6b656;arcSize=13;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="320" width="300" height="140" as="geometry"/>
                 </mxCell>
-                <mxCell id="65" value="Cold-Start Strategy&#xa;━━━━━━━━━━━━━━━━━━━━━━━━&#xa;Phase 1 (no data yet):&#xa;  Use text-embedding-004 (Google)&#xa;  No fine-tuning needed&#xa;&#xa;Phase 2 (after 500+ Q&amp;A pairs):&#xa;  Fine-tune embedding model&#xa;  on your curated dataset" style="rounded=1;whiteSpace=wrap;html=1;align=left;fillColor=#dae8fc;strokeColor=#6c8ebf;arcSize=11;" vertex="1" parent="1">
-                    <mxGeometry x="60" y="470" width="300" height="160" as="geometry"/>
+                <mxCell id="65" value="&lt;font color=&quot;#000000&quot;&gt;Cold-Start Strategy&lt;br&gt;━━━━━━━━━━━━━━━━━━━━━━━━&lt;br&gt;Phase 1 (no data yet):&lt;br&gt;  Use text-embedding-004 (Google)&lt;br&gt;  No fine-tuning needed&lt;br&gt;&lt;br&gt;Phase 2 (after 500+ Q&amp;amp;A pairs):&lt;br&gt;  Fine-tune embedding model&lt;br&gt;  on your curated datase&lt;/font&gt;t" style="rounded=0;whiteSpace=wrap;html=1;align=left;fillColor=#dae8fc;strokeColor=#6c8ebf;arcSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="470" width="300" height="160" as="geometry"/>
                 </mxCell>
-                <mxCell id="66" value="stores vectors" style="edgeStyle=none;html=1;dashed=1;strokeColor=#d6b656;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="39" target="59">
+                <mxCell id="66" value="stores vectors" style="edgeStyle=none;html=1;dashed=1;strokeColor=#d6b656;exitX=1;exitY=0.5;exitDx=0;exitDy=0;rounded=0;" parent="1" source="39" target="59" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="68" value="extraction" style="ellipse;whiteSpace=wrap;html=1;direction=west;" vertex="1" parent="1">
+                <mxCell id="68" value="extraction" style="ellipse;whiteSpace=wrap;html=1;direction=west;rounded=0;" parent="1" vertex="1">
                     <mxGeometry x="390" y="-30" width="100" height="50" as="geometry"/>
                 </mxCell>
-                <mxCell id="69" style="edgeStyle=none;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="1" source="68">
-                    <mxGeometry relative="1" as="geometry">
-                        <mxPoint x="438.6" y="18.26" as="sourcePoint"/>
-                        <mxPoint x="440" y="80" as="targetPoint"/>
-                    </mxGeometry>
-                </mxCell>
-                <mxCell id="71" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="70" target="4">
+                <mxCell id="69" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;rounded=0;" parent="1" source="68" target="5" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="70" value="linking" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                <mxCell id="71" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;rounded=0;" parent="1" source="70" target="4" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="70" value="linking" style="ellipse;whiteSpace=wrap;html=1;rounded=0;" parent="1" vertex="1">
                     <mxGeometry x="235" y="-30" width="110" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="90" value="&lt;b&gt;① Abstract Pipeline&lt;/b&gt;" style="text;html=1;strokeColor=#336699;fillColor=#dae8fc;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1;fontSize=13;fontColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="-90" y="-80" width="920" height="36" as="geometry"/>
+                </mxCell>
+                <mxCell id="72" value="&lt;font color=&quot;#000000&quot;&gt;Log rejection reason &amp;amp; flag for review&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="210" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="73" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;rounded=0;" parent="1" source="3" target="72" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="73L" value="if negative" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];rounded=0;" parent="73" connectable="0" vertex="1">
+                    <mxGeometry x="-0.5" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="92" style="edgeStyle=none;hachureGap=4;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;fontFamily=Architects Daughter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DArchitects%2BDaughter;fontSize=16;rounded=0;" parent="1" source="78" target="82" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="78" value="&lt;font color=&quot;#000000&quot;&gt;≥500 accepted Q&amp;amp;A pairs?&lt;/font&gt;" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;rounded=0;" parent="1" vertex="1">
+                    <mxGeometry x="-100" y="438" width="180" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="79" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;rounded=0;" parent="1" source="78" target="22" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="79L" value="yes → fine-tune" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];rounded=0;" parent="79" connectable="0" vertex="1">
+                    <mxGeometry x="-0.3" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="108" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="82" target="24">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="82" value="&lt;span style=&quot;background-color: rgb(255, 255, 255);&quot;&gt;&lt;font color=&quot;#000000&quot;&gt;Use base model (text-embedding-004, cold-start)&lt;/font&gt;&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+                    <mxGeometry x="-275" y="450" width="150" height="66" as="geometry"/>
+                </mxCell>
+                <mxCell id="86" value="&lt;font color=&quot;#000000&quot;&gt;Check Redis cache (skip re-generation if hit)&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f0f0f0;strokeColor=#666666;dashed=1;" parent="1" vertex="1">
+                    <mxGeometry x="710" y="-30" width="140" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="88" value="cache miss → proceed" style="edgeStyle=none;html=1;exitX=0;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;dashed=1;strokeColor=#666666;rounded=0;" parent="1" source="86" target="6" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="96" value="&lt;font color=&quot;#000000&quot;&gt;Generate Training Pairs&lt;br&gt;(positive / negative / hard-negative)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+                    <mxGeometry x="-90" y="270" width="160" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="97" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;rounded=0;" parent="1" source="96" target="78" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="99" value="&lt;font color=&quot;#000000&quot;&gt;Recommendation Evaluation&lt;br&gt;(base vs fine-tuned model)&lt;br&gt;Top-K LO match rate metric&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="1" vertex="1">
+                    <mxGeometry x="-502" y="925" width="155" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="100" style="edgeStyle=none;html=1;rounded=0;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="-260" y="965" as="sourcePoint"/>
+                        <mxPoint x="-350" y="965" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="101" value="&lt;font color=&quot;#000000&quot;&gt;GET /dataset/export&lt;br&gt;Export clean accepted dataset&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
+                    <mxGeometry x="-255" y="62" width="155" height="46" as="geometry"/>
+                </mxCell>
+                <mxCell id="101E" style="edgeStyle=none;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;dashed=1;strokeColor=#d6b656;rounded=0;" parent="1" source="17" target="101" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="102" value="&lt;font color=&quot;#000000&quot;&gt;Build Training Pairs&lt;br&gt;POST /training-pairs/build&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+                    <mxGeometry x="675" y="930" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="103" value="embed &amp; push vectors" style="edgeStyle=none;html=1;dashed=1;strokeColor=#82b366;entryX=1;entryY=0.5;entryDx=0;entryDy=0;rounded=0;" parent="1" target="39" edge="1">
+                    <mxGeometry x="0.3615" y="-4" relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="730" y="820"/>
+                            <mxPoint x="660" y="820"/>
+                        </Array>
+                        <mxPoint as="offset"/>
+                        <mxPoint x="780" y="930" as="sourcePoint"/>
+                    </mxGeometry>
                 </mxCell>
             </root>
         </mxGraphModel>
