@@ -1,0 +1,42 @@
+# ── API Layer ──────────────────────────────────────────────
+fastapi
+uvicorn[standard]
+python-multipart
+aiofiles
+
+# ── Config & Validation ────────────────────────────────────
+pydantic
+pydantic-settings
+python-dotenv
+
+# ── LangChain / Document Processing ───────────────────────
+langchain
+langchain-community
+langchain-text-splitters
+PyMuPDF
+
+# ── LangGraph (AI Pipeline Orchestration) ─────────────────
+langgraph
+
+# ── Gemini API ─────────────────────────────────────────────
+google-generativeai
+langchain-google-genai
+
+# ── Database (PostgreSQL + ORM + Migrations) ───────────────
+sqlalchemy[asyncio]
+asyncpg
+alembic
+
+# ── Vector Database ────────────────────────────────────────
+chromadb
+
+# ── Cache ──────────────────────────────────────────────────
+redis[asyncio]
+
+# ── Embeddings & Fine-Tuning ───────────────────────────────
+sentence-transformers
+
+# ── Testing ────────────────────────────────────────────────
+pytest
+pytest-asyncio
+httpx

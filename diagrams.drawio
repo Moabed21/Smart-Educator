@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="-TcybztBU468V69R5p9I" name="Page-1">
-        <mxGraphModel dx="2948" dy="2711" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" background="none" math="0" shadow="0">
+        <mxGraphModel dx="1690" dy="1863" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" background="none" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -78,7 +78,7 @@
                 <mxCell id="45" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;rounded=0;" parent="1" source="30" target="43" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="30" value="&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;Imagined implementation&lt;/span&gt;" style="shape=hexagon;perimeter=hexagonPerimeter2;whiteSpace=wrap;html=1;fixedSize=1;rounded=0;" parent="1" vertex="1">
+                <mxCell id="30" value="&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;Imagined implementation&lt;/span&gt;" style="shape=hexagon;perimeter=hexagonPerimeter2;whiteSpace=wrap;html=1;fixedSize=1;rounded=0;size=20;" parent="1" vertex="1">
                     <mxGeometry x="410" y="180" width="120" height="80" as="geometry"/>
                 </mxCell>
                 <mxCell id="36" value="" style="edgeStyle=none;html=1;rounded=0;" parent="1" source="33" target="35" edge="1">
@@ -241,7 +241,7 @@
                         <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="108" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="82" target="24">
+                <mxCell id="108" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="82" target="24" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
                 <mxCell id="82" value="&lt;span style=&quot;background-color: rgb(255, 255, 255);&quot;&gt;&lt;font color=&quot;#000000&quot;&gt;Use base model (text-embedding-004, cold-start)&lt;/font&gt;&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
