@@ -5,7 +5,7 @@ from helpers.config import get_settings, Settings
 base_router = APIRouter(
     # prefix means adding a keyword before every route below
     # ex. the "/" route , afer the prefix below it can only accessed by /api/v2 then /
-    prefix="/api/v1",
+    prefix="/api/base",
     #tags for mark every group of routes with specific tag
     tags = ["base"]
 )
@@ -18,4 +18,11 @@ async def wel(app_settings : Settings = Depends(get_settings)):
 
     return {
         "message":app_settings.APP_NAME
+    }
+@base_router.get("/health")
+async def get_health(settings: Settings = Depends(get_settings)):
+    return{
+        "status":"ok",
+        "version": settings.APP_VERSION,
+        "app":settings.APP_NAME
     }
