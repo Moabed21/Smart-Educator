@@ -5,7 +5,7 @@ from helpers.config import get_settings, Settings
 base_router = APIRouter(
     # prefix means adding a keyword before every route below
     # ex. the "/" route , afer the prefix below it can only accessed by /api/v2 then /
-    prefix="/api/base",
+    prefix="/api/v1",
     #tags for mark every group of routes with specific tag
     tags = ["base"]
 )

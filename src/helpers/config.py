@@ -21,6 +21,7 @@ class Settings(BaseSettings):
     GEMINI_API_KEY: str
     FILE_ALLOWED_TYPES: list
     FILE_DEFAULT_CHUNK_SIZE: int
+    DATABASE_URL: str
 
 @lru_cache
 def get_settings() -> Settings:

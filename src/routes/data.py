@@ -46,7 +46,7 @@ async def upload_data(project_id : str,file: UploadFile,
 	# ----------------------------------------------------------------------
 	except Exception as e:
 		logger.error(f"error while uploading the file {e}")
-		JSONResponse(
+		return JSONResponse(
 		content={"signal": ResponseSignal.FILE_UPLOAD_FAILED.value},
 		status_code=status.HTTP_200_OK
 	)
