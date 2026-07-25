@@ -1,0 +1,10 @@
+goal:   recommend (predict) useful questions based the previous analyzed study or
+        what they need to practice, or what they need to practice.
+
+recommended tech approach:   to use embeddings and similarity search, by representing each question as a vector.
+
+note:           using embeddings directly on raw questions is not always enough!.
+
+another note:   For an educational product, recommendation should not only be based on text similarity,
+                It should also reflect educational meaning.
+
