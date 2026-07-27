@@ -1,4 +1,6 @@
 src/.env
+.env
 __pycache__/
 files/
 pyrightconfig.json
+venv/
