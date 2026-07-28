@@ -19,7 +19,7 @@ PyMuPDF
 langgraph
 
 # ── Gemini API ─────────────────────────────────────────────
-google-generativeai
+google-genai
 langchain-google-genai
 
 # ── Database (PostgreSQL + ORM + Migrations) ───────────────
