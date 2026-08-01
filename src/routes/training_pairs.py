@@ -1,3 +1,4 @@
+import asyncio
 import os
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -13,15 +14,17 @@ training_pairs_router = APIRouter(
     tags=["training-pairs"]
 )
 
-
 @training_pairs_router.post("/build")
 async def build_training_pairs(db: AsyncSession = Depends(get_db)):
     """Build positive, negative, and hard-negative training pairs from saved DB questions per PRD §8.7 & §9.
 
     Exports pairs to assets/training_pairs.jsonl and returns pair statistics.
     """
-    accepted_questions = await get_accepted_questions(db)
-    all_outcomes = {lo.id: lo for lo in await get_all_outcomes(db)}
+    accepted_questions, raw_outcomes = await asyncio.gather(
+        get_accepted_questions(db),
+        get_all_outcomes(db),
+    )
+    all_outcomes = {lo.id: lo for lo in raw_outcomes}
 
     questions_with_lo: list[QuestionWithLO] = []
 
