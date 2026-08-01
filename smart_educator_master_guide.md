@@ -1,234 +1,296 @@
-# Smart-Educator — Unified Master Architecture & Execution Guide
+# 🧠 Smart-Educator — Unified Master Architecture & Execution Guide
 
-> **Combined P1 (API & Data), P2 (AI & LangGraph), and P3 (Infrastructure & Fine-Tuning) Handoff Guide**  
-> **Project Version:** `v0.1.0-alpha`  
-> **Date:** July 2026
-
----
-
-## 🚀 1. Project Overview & System Purpose
-
-**Smart-Educator** is an automated, AI-driven educational dataset generator, evaluator, and semantic recommendation engine. It transforms raw educational passages/curricula into structured, high-quality assessment datasets (MCQs, True/False, Short Answer) mapped to extracted **Learning Outcomes (LOs)**, evaluated on **8 strict quality criteria** via an LLM-as-Judge, and fine-tuned for semantic vector recommendations.
+> **The Definitive Master Report: Combining P1 (API & Data), P2 (AI & LangGraph), and P3 (Infrastructure & Fine-Tuning) Handoffs + Latest Additions**  
+> **Project Version:** `v0.1.0`  
+> **Target Audience:** New developers joining the project, team members reviewing system flows, or owners revising individual components.
 
 ---
 
-## 🏗️ 2. Architectural Layers & Responsibilities
-
-The system is split into three foundational engineering layers:
-
-```
-                  ┌────────────────────────────────────────────────────────┐
-                  │                 FastAPI REST API Layer                 │
-                  └───────────────────────────┬────────────────────────────┘
-                                              │
-                    ┌─────────────────────────┴─────────────────────────┐
-                    ▼                                                   ▼
-┌───────────────────────────────────────┐           ┌───────────────────────────────────────┐
-│     P1: Core API & Persistence        │           │     P2: AI & LangGraph Pipeline       │
-│  - Endpoint Routing & Validation      │           │  - 5-Node Orchestration Graph         │
-│  - PostgreSQL Async Engine & ORM      │           │  - Gemini 2.5 Structured Extraction    │
-│  - CRUD Operations & Serialization    │           │  - 8-Criteria LLM-as-Judge Evaluator  │
-└───────────────────┬───────────────────┘           └───────────────────┬───────────────────┘
-                    │                                                   │
-                    └─────────────────────────┬─────────────────────────┘
-                                              ▼
-                  ┌────────────────────────────────────────────────────────┐
-                  │       P3: Infrastructure, Vector DB & Fine-Tuning       │
-                  │  - Docker Compose Stack (Postgres, Redis, ChromaDB)    │
-                  │  - Redis Caching (Context Hash & Embedding Cache)      │
-                  │  - VectorStoreService (ChromaDB + Gemini Embeddings)   │
-                  │  - Fine-Tuning Pipeline (SentenceTransformerTrainer)   │
-                  └────────────────────────────────────────────────────────┘
-```
+## 📋 Table of Contents
+1. [Project Overview & Core Objective](#-1-project-overview--core-objective)
+2. [Architectural Breakdown & Team Roles](#-2-architectural-breakdown--team-roles)
+3. [System Flow & Data Lifecycle](#-3-system-flow--data-lifecycle)
+4. [Complete API Surface & Endpoint Reference](#-4-complete-api-surface--endpoint-reference)
+5. [Database Schemas & Persistence Layer](#-5-database-schemas--persistence-layer)
+6. [Caching & Vector DB Infrastructure](#-6-caching--vector-db-infrastructure)
+7. [Codebase Walkthrough by Component](#-7-codebase-walkthrough-by-component)
+8. [Step-by-Step Setup & How-to-Run Guide](#-8-step-by-step-setup--how-to-run-guide)
+9. [Troubleshooting & Maintenance Checklist](#-9-troubleshooting--maintenance-checklist)
 
 ---
 
-## 🔄 3. Deep-Dive: Inner System Flow
+## 🚀 1. Project Overview & Core Objective
 
-### 🌊 Flow 1: Dataset Generation & Evaluation (`POST /api/v1/dataset/generate`)
+**Smart-Educator** is an automated, AI-driven educational platform designed to turn raw educational documents (PDFs, text passages, curricula) into structured, high-quality assessment datasets.
 
-```
-Raw Educational Context (JSON)
-           │
-           ▼
-[ 1. Hashing & Caching ] ──► Compute SHA256(passage + config) ──► Redis Hit? ──► Return Cached JSON
-           │ (Miss)
-           ▼
-[ 2. LangGraph Execution ]
-           │
-           ├─► Node 1: parse_node ──────────► Validates payload & calculates context hash
-           ├─► Node 2: extract_outcomes_node ► Calls Gemini structured output (extracts LOs + concepts)
-           ├─► Node 3: generate_questions_node► Generates MCQs, T/F, Short Answer per difficulty distribution
-           ├─► Node 4: link_outcomes_node ───► Maps questions to LOs with confidence & reasoning
-           └─► Node 5: evaluate_node ────────► 8-criteria LLM-as-Judge (accepted / rejected / needs_review)
-           │
-           ▼
-[ 3. DB Persistence ] ──► Store LOs, Questions, Links, and Evaluations in PostgreSQL via Async CRUD
-           │
-           ▼
-[ 4. Cache Update ] ──► Save final result to Redis (24h TTL) & return JSON payload
-```
-
-### 🎯 Flow 2: Semantic Vector Recommendation (`POST /api/v1/recommendations/questions`)
-
-```
-User Search Query: "How does evaporation lead to cloud formation?"
-           │
-           ▼
-[ 1. Embedding ] ──► Redis Cache Check ──(Miss)──► Gemini `text-embedding-004` (or Fine-Tuned Model)
-           │
-           ▼
-[ 2. ChromaDB Search ] ──► Similarity Search (Cosine distance, Top-K = 5)
-           │
-           ▼
-[ 3. Outcome Matching ] ──► Retrieve matching Question IDs, Question text, and mapped Learning Outcomes
-```
-
-### 🏋️ Flow 3: Training Pair Generation & Model Fine-Tuning (`POST /api/v1/training-pairs/build`)
-
-```
-PostgreSQL Database (Accepted & Needs-Review Questions)
-           │
-           ▼
-[ 1. Pair Generator ] ──► Generates 3 types of training pairs:
-                           ├── Positive Pair (Same LO + Same Concept)       --> Label: 1.0
-                           ├── Negative Pair (Different LOs)               --> Label: 0.0
-                           └── Hard-Negative (Different LO + High Overlap) --> Label: 0.0
-           │
-           ▼
-[ 2. JSONL Export ] ──► Export pairs to `training_pairs.jsonl`
-           │
-           ▼
-[ 3. SentenceTransformerTrainer ] ──► Fine-tunes `paraphrase-multilingual-mpnet-base-v2` 
-                                       using CosineSimilarityLoss
-           │
-           ▼
-[ 4. Hot-Swap Vector DB ] ──► Re-embed questions & update ChromaDB collection
-```
+### Core Capabilities:
+1. **Document Ingestion & Chunking**: Streams PDF/TXT documents asynchronously and chunks them for LLM processing.
+2. **Automated Learning Outcome (LO) Extraction**: Uses Google Gemini to analyze context and extract explicit, verifiable Learning Outcomes (`text`, `concept`, `source_evidence`).
+3. **Multi-Type Question Generation**: Generates Multiple-Choice Questions (MCQs), True/False, and Short Answer questions aligned with specific LOs and difficulty distributions.
+4. **Semantic Question-to-LO Linking**: Uses local embedding similarity (`sentence-transformers`) to score question-to-outcome alignment with confidence scores and reasoning.
+5. **8-Criteria LLM-as-Judge Evaluation**: Scores generated questions across 8 strict criteria (grounding, clarity, answer correctness, explanation correctness, LO alignment, difficulty, validity, choices) and categorizes items as `accepted`, `needs_review`, or `rejected`.
+6. **Clean Dataset Export**: Filters approved assessment data for downstream usage.
+7. **Training Pair Construction & Fine-Tuning**: Generates positive, negative, and Jaccard-based hard-negative pairs to fine-tune embedding models using `CosineSimilarityLoss`.
+8. **Vector Similarity Recommendation**: Uses ChromaDB and Gemini embeddings to perform semantic search and recommend relevant questions for user queries.
 
 ---
 
-## 🔌 4. Complete API Surface
+## 🏗️ 2. Architectural Breakdown & Team Roles
 
-| Method | Endpoint Path | Description | Layer Owner | Status |
+The system is organized into three decoupled, complementary layers:
+
+```
+                                    ┌────────────────────────────────────────────────────────┐
+                                    │                 FastAPI REST API Layer                 │
+                                    └───────────────────────────┬────────────────────────────┘
+                                                                │
+                      ┌─────────────────────────────────────────┴─────────────────────────────────────────┐
+                      ▼                                                                                   ▼
+┌───────────────────────────────────────────┐                               ┌───────────────────────────────────────────┐
+│     P1: API, Data & Export Layer          │                               │      P2: AI & LangGraph Pipeline           │
+│  - FastAPI Routes & Request Schemas       │                               │  - 5-Node State Machine Pipeline          │
+│  - Document Ingestion & Async Chunking    │                               │  - Google Gemini Structured Output        │
+│  - PostgreSQL Async Engine & Alembic      │                               │  - SBERT Question-to-LO Linker            │
+│  - CRUD Layer & Dataset Export Endpoint   │                               │  - 8-Criteria LLM-as-Judge Evaluator      │
+└─────────────────────┬─────────────────────┘                               └─────────────────────┬─────────────────────┘
+                      │                                                                           │
+                      └─────────────────────────────────────────┬─────────────────────────────────┘
+                                                                ▼
+                                    ┌────────────────────────────────────────────────────────┐
+                                    │        P3: Infrastructure, Vector DB & ML Tuning       │
+                                    │  - Docker Compose (Postgres, Redis, ChromaDB)          │
+                                    │  - Redis Caching Layer (Idempotency & Embeddings)      │
+                                    │  - VectorStoreService (ChromaDB + text-embedding-004)  │
+                                    │  - Pair Generator & SentenceTransformerTrainer         │
+                                    └────────────────────────────────────────────────────────┘
+```
+
+| Layer | Primary Responsibilities | Key Files / Modules |
+|---|---|---|
+| **P1: API & Data** | Endpoints (`/health`, `/data/*`, `/dataset/export`), File Ingestion, PostgreSQL ORM, Async CRUD Operations | `routes/data.py`, `routes/dataset.py`, `controllers/`, `models/`, `helpers/db.py` |
+| **P2: AI Pipeline** | LangGraph Orchestration, Gemini API Wrapper, LO Extraction, Question Generation, Semantic Linker, LLM-as-Judge Evaluator | `graph/graph.py`, `services/gemini_client.py`, `services/lo_extraction.py`, `services/question_generator.py`, `services/lo_linker.py`, `services/evaluator.py` |
+| **P3: Infra & ML** | Docker Stack, Redis Cache, ChromaDB Vector DB, Training Pair Generator, Embedding Model Fine-Tuning | `docker/docker-compose.yml`, `helpers/redis_client.py`, `helpers/hashing.py`, `services/embedding_service.py`, `stores/vector/vector_store.py`, `services/pair_generator.py`, `training/fine_tune.py` |
+
+---
+
+## 🔄 3. System Flow & Data Lifecycle
+
+### 🌊 1. Ingestion & Processing Flow (`/api/v1/data/*`)
+1. User uploads a PDF or TXT file to `POST /data/upload/{project_id}`.
+2. `DataController` validates format and file size limit, generates a unique filename, and writes chunks asynchronously using `aiofiles`.
+3. User triggers `POST /data/process/{project_id}`. `ProcessController` offloads heavy PyMuPDF/TXT parsing to a threadpool (`asyncio.to_thread`) to prevent blocking the event loop, splitting text into structured chunks (`RecursiveCharacterTextSplitter`).
+
+### ⚡ 2. Generation & Evaluation Flow (`POST /api/v1/dataset/generate`)
+```mermaid
+flowchart TD
+    A[EducationalContext Payload] --> B[Compute Context Hash: sha256 passage + config]
+    B --> C{Check Redis Cache}
+    C -->|Cache Hit| D[Return Cached JSON Instantly - 2ms]
+    C -->|Cache Miss| E[LangGraph 5-Node State Machine]
+    
+    E --> E1[Node 1: parse_node]
+    E1 --> E2[Node 2: extract_outcomes_node via Gemini]
+    E2 --> E3[Node 3: generate_questions_node via Gemini]
+    E3 --> E4[Node 4: link_outcomes_node via SBERT]
+    E4 --> E5[Node 5: evaluate_node via LLM-as-Judge]
+    
+    E5 --> F{Evaluate Batch Status}
+    F -->|All Rejected| G[log_and_discard_node: Log & Skip DB Write]
+    F -->|Accepted / Needs Review| H[store_node: Save LOs, Questions, Links, Evals to PostgreSQL]
+    
+    H --> I[Store Result JSON in Redis - TTL 24h]
+    I --> J[Return Response Summary JSON]
+```
+
+### 🎯 3. Recommendation & Training Flow
+1. **Export (`GET /dataset/export`)**: Queries PostgreSQL for questions with status `accepted` or `needs_review`, matches them with their LOs and evaluation scores, and exports clean JSON arrays.
+2. **Pair Building (`POST /training-pairs/build`)**: Converts DB records into `QuestionWithLO` objects, executes `generate_pairs()` to produce positive, negative, and hard-negative pairs, and writes `assets/training_pairs.jsonl`.
+3. **Fine-Tuning (`training/fine_tune.py`)**: Trains `SentenceTransformer` (`paraphrase-multilingual-mpnet-base-v2`) on pairs using `CosineSimilarityLoss`.
+4. **Semantic Search (`POST /recommendations/questions`)**: Converts user search query to a 768-dim embedding (`text-embedding-004`), queries ChromaDB, and returns top $K$ matching questions.
+
+---
+
+## 🔌 4. Complete API Surface & Endpoint Reference
+
+| Method | Path | Summary | Inputs | Output |
 |---|---|---|---|---|
-| `GET` | `/api/v1/health` | Service health status | P1 | ✅ Operational |
-| `POST` | `/api/v1/data/upload/{project_id}` | PDF/TXT file upload | P1 | ✅ Operational |
-| `POST` | `/api/v1/data/process/{project_id}` | LangChain document chunking | P1 | ✅ Operational |
-| `POST` | `/api/v1/dataset/generate` | End-to-end LO extraction + Question generation | P2 / P3 | ✅ Integrated |
-| `POST` | `/api/v1/dataset/evaluate` | Standalone 8-criteria LLM-as-Judge evaluation | P2 | ✅ Integrated |
-| `GET` | `/api/v1/dataset/export` | Export clean dataset (`accepted` + `needs_review`) | P1 / P2 | ✅ Integrated |
-| `POST` | `/api/v1/training-pairs/build` | Build positive/negative/hard-negative pairs | P3 | ✅ Integrated |
-| `POST` | `/api/v1/recommendations/questions` | Vector similarity recommendation search | P3 | ✅ Integrated |
+| `GET` | `/api/v1/health` | Service health status | None | `{"status": "ok", "version": "0.1", "app": "smart-educator"}` |
+| `POST` | `/api/v1/data/upload/{project_id}` | Upload passage file | `file: UploadFile` | `{"signal": "...", "file_id": "..."}` |
+| `POST` | `/api/v1/data/process/{project_id}` | Chunk uploaded file | `ProcessRequest(file_id, chunk_size, overlap_size)` | Array of text chunk objects |
+| `POST` | `/api/v1/dataset/generate` | Run full AI pipeline | `EducationalContext` JSON payload | Summary counts (`learning_outcomes_created`, `questions_created`, etc.) |
+| `POST` | `/api/v1/dataset/evaluate` | Re-evaluate DB questions | `EvaluateRequest(question_ids: Optional[list])` | `{"questions_evaluated": N, "status_breakdown": {...}}` |
+| `GET` | `/api/v1/dataset/export` | Export clean dataset | Query param: `difficulty` (optional) | Array of PRD §8.6 flat dataset records |
+| `POST` | `/api/v1/training-pairs/build` | Generate training pairs | None | `{"total_pairs": N, "positive_pairs": X, "negative_pairs": Y, "hard_negative_pairs": Z}` |
+| `POST` | `/api/v1/recommendations/questions` | Vector similarity search | `RecommendationRequest(query, top_k, difficulty)` | `{"query": "...", "recommendations": [...]}` |
 
 ---
 
-## 🗄️ 5. Data Models & Vector Stores
+## 🗄️ 5. Database Schemas & Persistence Layer
 
-### PostgreSQL Tables (Managed via SQLAlchemy Async + Alembic)
-1. **`learning_outcomes`**: Stores `id` (UUID), `text`, `concept`, `source_evidence`, `context_hash`.
-2. **`questions`**: Stores `id` (UUID), `question_text`, `question_type`, `choices` (JSON), `correct_answer`, `explanation`, `difficulty`, `estimated_time_minutes`, `related_LO_ids` (JSON), `source_evidence`.
-3. **`question_lo_links`**: Junction table mapping `question_id` $\leftrightarrow$ `lo_id` with `confidence` (0.0–1.0) and `reason`.
-4. **`evaluation_results`**: Stores 8 individual scores (0.0–1.0), `overall_score`, and status (`accepted`, `rejected`, `needs_review`).
+PostgreSQL schema auto-creates on FastAPI startup via `create_tables()` in `main.py`.
 
-### Vector Store & Cache
-* **Redis**: Used for prompt idempotency caching (`dataset_generate:<hash>`, 24h TTL) and text embedding caching (`embed:<hash>`, 24h TTL).
-* **ChromaDB**: Collection `"questions"` storing question text embeddings alongside metadata (`question_id`, `difficulty`, `LO_ids`).
-
----
-
-## 💻 6. How to Run the Project (Step-by-Step)
-
-### Prerequisites
-* **Docker & Docker Compose** installed
-* **Python 3.11+** and **Conda**
-* **NVIDIA GPU (Optional but recommended for fine-tuning)**: CUDA 12.6 supported.
-
-### Step 1: Clone & Configure Environment
-```bash
-git clone https://github.com/Moabed21/Smart-Educator.git
-cd Smart-Educator
-
-# Create .env from example in the project root
-cp .env.example .env
+```
+                    ┌─────────────────────────┐
+                    │    learning_outcomes    │
+                    ├─────────────────────────┤
+                    │ id (UUID, PK)           │
+                    │ text (String)           │
+                    │ concept (String)        │
+                    │ source_evidence (String)│
+                    │ context_hash (Indexed)  │
+                    └────────────▲────────────┘
+                                 │
+                                 │ (via QuestionLOLink)
+                                 │
+                    ┌────────────┴────────────┐
+                    │    question_lo_links    │
+                    ├─────────────────────────┤
+                    │ id (UUID, PK)           │
+                    │ question_id (FK) ───────┼──────────┐
+                    │ lo_id (FK)              │          │
+                    │ confidence (Float)      │          │
+                    │ reason (String)         │          │
+                    └─────────────────────────┘          │
+                                                         │
+                                                         ▼
+┌─────────────────────────┐                 ┌─────────────────────────┐
+│   evaluation_results    │                 │        questions        │
+├─────────────────────────┤                 ├─────────────────────────┤
+│ id (UUID, PK)           │                 │ id (UUID, PK)           │
+│ question_id (FK) ───────┼─────────────────┤ question_text (String)  │
+│ 8 Criteria Scores (0-1) │                 │ question_type (String)  │
+│ overall_score (Float)   │                 │ choices (JSON)          │
+│ status (Enum String)    │                 │ correct_answer (String) │
+└─────────────────────────┘                 │ explanation (String)    │
+                                            │ difficulty (String)     │
+                                            │ estimated_time_minutes  │
+                                            │ related_LO_ids (JSON)   │
+                                            │ source_evidence (String)│
+                                            └─────────────────────────┘
 ```
 
-Ensure your `.env` contains:
+---
+
+## ⚡ 6. Caching & Vector DB Infrastructure
+
+### 🔴 Redis Caching Layer ([redis_client.py](file:///home/moabed/Documents/Smart-Educator/src/helpers/redis_client.py))
+- **Pipeline Cache (`dataset_generate:<sha256_hash>`)**: Caches complete `/dataset/generate` output payloads for 24 hours (`REDIS_TTL=86400`).
+- **Embedding Cache (`embedding:<sha256_text_model>`)**: Caches 768-dim Google `text-embedding-004` vectors to minimize API usage.
+
+### 🔷 ChromaDB Vector DB ([vector_store.py](file:///home/moabed/Documents/Smart-Educator/src/stores/vector/vector_store.py))
+- Stores question text vectors in collection `"questions"`.
+- Performs $L_2$ / Cosine distance nearest-neighbor search (`search(query_embedding, top_k)`).
+
+---
+
+## 📂 7. Codebase Walkthrough by Component
+
+```
+src/
+├── main.py                          ← App entry point, lifecycle startup, router registration
+├── .env                             ← Local settings (DB URL, Gemini API Key, Redis, Chroma)
+│
+├── helpers/
+│   ├── config.py                    ← BaseSettings schema with LRU cache & fallbacks
+│   ├── db.py                        ← Async SQLAlchemy engine, Base, and get_db session dependency
+│   ├── redis_client.py               ← Async Redis client with get_cached() and set_cached()
+│   └── hashing.py                    ← SHA256 context hasher
+│
+├── models/                          ← SQLAlchemy ORM Table Definitions
+│   ├── learningOutcome.py
+│   ├── questions.py
+│   ├── questionL0Link.py
+│   └── evaluationResult.py
+│
+├── routes/                          ← API Routers
+│   ├── base.py                      ← GET /health
+│   ├── data.py                      ← POST /upload, POST /process
+│   ├── dataset.py                   ← POST /generate, POST /evaluate, GET /export
+│   ├── training_pairs.py            ← POST /build
+│   └── recommendations_questions.py ← POST /questions
+│
+├── controllers/
+│   ├── CRUD_Operations/             ← Async DB Operations
+│   │   ├── learning_outcomes.py
+│   │   ├── questions.py
+│   │   ├── question_lo_links.py
+│   │   └── evaluation_results.py
+│   ├── DataController.py            ← Upload validation and unique filename generation
+│   ├── ProcessController.py         ← Async PDF/TXT loader and character text chunking
+│   └── ProjectController.py         ← File path management
+│
+├── services/                        ← Core AI & ML Services
+│   ├── gemini_client.py              ← Gemini SDK wrapper with retries & structured output
+│   ├── lo_extraction.py              ← Extract LOs using Gemini
+│   ├── question_generator.py         ← Generate MCQs/TF/Short Answer using Gemini
+│   ├── lo_linker.py                  ← Local SBERT semantic similarity linker
+│   ├── evaluator.py                  ← 8-criteria LLM-as-Judge evaluator
+│   ├── pair_generator.py             ← Positive / Negative / Hard-Negative pair builder
+│   └── embedding_service.py          ← Text embedding service (Redis-cached)
+│
+├── graph/
+│   └── graph.py                      ← LangGraph 5-node orchestration pipeline
+│
+├── stores/vector/
+│   └── vector_store.py               ← VectorStoreService wrapping ChromaDB HttpClient
+│
+└── training/
+    └── fine_tune.py                  ← SentenceTransformerTrainer fine-tuning logic
+```
+
+---
+
+## 💻 8. Step-by-Step Setup & How-to-Run Guide
+
+### Step 1: Environment Configuration
+Copy `.env.example` to `.env` in `src/.env` and verify settings:
 ```env
-DATABASE_URL=postgresql+asyncpg://postgres:postgres@localhost:5432/smart_educator
-GEMINI_API_KEY=your_actual_gemini_api_key_here
-REDIS_HOST=localhost
+APP_NAME="smart-educator"
+APP_VERSION="0.1"
+GEMINI_API_KEY="your_actual_gemini_api_key"
+
+DATABASE_URL="postgresql+asyncpg://postgres:postgres@localhost:5432/smart_educator"
+
+REDIS_HOST="localhost"
 REDIS_PORT=6379
-CHROMA_HOST=localhost
+CHROMA_HOST="localhost"
 CHROMA_PORT=8000
+REDIS_TTL=86400
 ```
 
 ### Step 2: Spin Up Infrastructure Containers
 ```bash
 docker compose -f docker/docker-compose.yml up -d
-
-# Verify all containers (Postgres, Redis, ChromaDB) are healthy:
 docker compose -f docker/docker-compose.yml ps
 ```
 
-### Step 3: Set Up Python Environment & Install Dependencies
+### Step 3: Install Dependencies
 ```bash
-# Create and activate conda environment
-conda create -n Smart-Educator python=3.11 -y
-conda activate Smart-Educator
-
-# Install dependencies
 pip install -r src/requirements.txt
-
-# (Optional - For NVIDIA GPU acceleration during fine-tuning)
-pip install torch --index-url https://download.pytorch.org/whl/cu126
 ```
 
-### Step 4: Launch the FastAPI Application
-> ⚠️ **CRITICAL:** Always run commands from the **project root directory** (so relative `.env` resolution works correctly).
+### Step 4: Run the Server
+> ⚠️ **IMPORTANT:** Always run commands from the **project root directory** (so relative `.env` resolution works).
 
 ```bash
 python -m uvicorn main:app --app-dir src --reload --port 8000
 ```
 
-Access Interactive Documentation at:
-* **Swagger UI:** [http://localhost:8000/docs](http://localhost:8000/docs)
-* **ReDoc:** [http://localhost:8000/redoc](http://localhost:8000/redoc)
+- **Swagger UI:** [http://localhost:8000/docs](http://localhost:8000/docs)
+- **ReDoc:** [http://localhost:8000/redoc](http://localhost:8000/redoc)
 
 ---
 
-## 📚 7. Key Concepts & Curated Learning Resources
+## 🔍 9. Troubleshooting & Maintenance Checklist
 
-To master the technical stack powering Smart-Educator, explore these recommended resources:
-
-### 1. **FastAPI & Async SQLAlchemy**
-* **Key Topics:** Asynchronous dependency injection (`Depends`), Pydantic v2 schemas, `asyncpg` connection pools.
-* 🔗 [FastAPI Official Async Docs](https://fastapi.tiangolo.com/async/)
-* 🔗 [SQLAlchemy 2.0 Async Unified Tutorial](https://docs.sqlalchemy.org/en/20/orm/extensions/asyncio.html)
-
-### 2. **LangGraph & Multi-Node AI Pipelines**
-* **Key Topics:** StateGraph, state reducers, conditional branching, LLM node error handling.
-* 🔗 [LangGraph Python Documentation](https://langchain-ai.github.io/langgraph/)
-* 🔗 [LangChain Google GenAI Integration Guide](https://python.langchain.com/docs/integrations/chat/google_generativeai/)
-
-### 3. **Google Gemini API (`google-genai` SDK)**
-* **Key Topics:** Structured JSON outputs (`response_schema`), Pydantic model passing, `text-embedding-004`.
-* 🔗 [Google GenAI Python SDK GitHub](https://github.com/googleapis/python-genai)
-* 🔗 [Gemini Structured Outputs Guide](https://ai.google.dev/gemini-api/docs/structured-output)
-
-### 4. **Vector Databases & Sentence Transformers Fine-Tuning**
-* **Key Topics:** ChromaDB collection upserts, `CosineSimilarityLoss`, `SentenceTransformerTrainer` (v5+ API), Jaccard similarity hard-negatives.
-* 🔗 [Sentence-Transformers Fine-Tuning Guide](https://sbert.net/docs/sentence_transformer/training_overview.html)
-* 🔗 [ChromaDB Client Documentation](https://docs.trychroma.com/)
-
----
-
-## 🔍 8. Diagnostic & Troubleshooting Checklist
-
-| Issue / Symptom | Probable Cause | Fix |
+| Symptom / Error | Root Cause | Solution |
 |---|---|---|
-| `Pydantic Field Required` error on startup | Executing python commands from inside `src/` instead of project root | Always execute commands from project root: `python -m uvicorn main:app --app-dir src` |
-| `refusing to merge unrelated histories` | Merging branches created independently | Use `git merge <branch> --allow-unrelated-histories` |
-| `Cannot connect to Postgres on 5432` | Docker container not running or port blocked | Run `docker compose -f docker/docker-compose.yml up -d` and check `pg_isready` |
-| Fine-tuning running very slowly on CPU | Default `torch` in requirements is CPU-only | Reinstall GPU torch: `pip install torch --index-url https://download.pytorch.org/whl/cu126` |
-| `google-generativeai` import errors | Using deprecated SDK | Use modern SDK: `from google import genai` (`google-genai` package) |
+| `ValidationError: Field required` on startup | Executing python commands from inside `src/` directory | Execute commands from the project root: `python -m uvicorn main:app --app-dir src` |
+| `Redis connection error` / `ConnectionRefusedError` | Docker Redis container is offline | Run `docker compose -f docker/docker-compose.yml up -d` |
+| `Cannot connect to Postgres on port 5432` | Local PostgreSQL instance conflict or container down | Ensure container is healthy via `docker compose ps` |
+| Fast API Event Loop freezes during PDF upload | Synchronous file loader called directly | Wrap loader calls using `await asyncio.to_thread(loader.load)` |
+| `google-generativeai` import errors | Deprecated Gemini SDK | Use `from google import genai` (`google-genai` package) |
+
+---
+
+> **Document Status:** Master Architecture Report Complete & Verified (`v0.1.0`).
