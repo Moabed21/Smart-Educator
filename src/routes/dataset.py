@@ -1,3 +1,4 @@
+import asyncio
 import json
 import logging
 import uuid
@@ -11,7 +12,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from controllers.CRUD_Operations.evaluation_results import get_evaluation_by_question, save_evaluations
 from controllers.CRUD_Operations.learning_outcomes import get_all_outcomes
 from controllers.CRUD_Operations.question_lo_links import get_links_by_question
-from controllers.CRUD_Operations.questions import get_accepted_questions, get_all_questions, get_question_by_id
+from controllers.CRUD_Operations.questions import get_accepted_questions, get_all_questions, get_question_by_id, get_questions_by_ids
 from graph.graph import run_pipeline
 from helpers.db import get_db
 from helpers.hashing import compute_context_hash
@@ -99,19 +100,13 @@ async def _fetch_questions_to_evaluate(
     reuses existing CRUD functions rather than adding a new bulk query.
     """
     if question_ids:
-        questions: list[QuestionsORM] = []
+        valid_uuids = []
         for raw_id in question_ids:
             try:
-                question_uuid = uuid.UUID(raw_id)
+                valid_uuids.append(uuid.UUID(raw_id))
             except ValueError:
                 logger.warning("Skipping malformed question id %r in /dataset/evaluate request.", raw_id)
-                continue
-            question = await get_question_by_id(db, question_uuid)
-            if question is None:
-                logger.warning("Skipping question id %r — no matching row in DB.", raw_id)
-                continue
-            questions.append(question)
-        return questions
+        return await get_questions_by_ids(db, valid_uuids)
 
     all_questions = await get_all_questions(db)
     unevaluated = []
@@ -275,11 +270,17 @@ async def export(
     Filters questions by difficulty if provided. Includes learning outcome texts,
     evaluation score, and validation status.
     """
-    accepted_questions = await get_accepted_questions(db)
+    # Pillar 3: Concurrent async query execution via asyncio.gather
+    raw_questions, raw_outcomes = await asyncio.gather(
+        get_accepted_questions(db),
+        get_all_outcomes(db),
+    )
+
+    accepted_questions = raw_questions
     if difficulty:
         accepted_questions = [q for q in accepted_questions if q.difficulty == difficulty]
 
-    all_outcomes = {lo.id: lo for lo in await get_all_outcomes(db)}
+    all_outcomes = {lo.id: lo for lo in raw_outcomes}
     records = []
 
     for q in accepted_questions:
