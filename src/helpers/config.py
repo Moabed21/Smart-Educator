@@ -22,10 +22,11 @@ class Settings(BaseSettings):
     FILE_ALLOWED_TYPES: list
     FILE_DEFAULT_CHUNK_SIZE: int
     DATABASE_URL: str
-    REDIS_HOST: str
-    REDIS_PORT: int
-    CHROMA_HOST: str
-    CHROMA_PORT: int
+    REDIS_HOST: str = "localhost"
+    REDIS_PORT: int = 6379
+    CHROMA_HOST: str = "localhost"
+    CHROMA_PORT: int = 8000
+    REDIS_TTL: int = 86400
 
 @lru_cache
 def get_settings() -> Settings:

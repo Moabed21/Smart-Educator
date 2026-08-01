@@ -4,6 +4,7 @@ from langchain_community.document_loaders import TextLoader
 from langchain_community.document_loaders import PyMuPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from models.enums import ProcessingEnum
+import asyncio
 import os
 
 class ProcessController(BaseController):
@@ -48,11 +49,11 @@ class ProcessController(BaseController):
 
         # each file type with its certain loader
 
-    def get_file_content(self, file_id: str):
+    async def get_file_content(self, file_id: str):
 
         loader = self.get_file_loader(file_id=file_id)
 
-        return loader.load()
+        return await asyncio.to_thread(loader.load)
 
     def process_file_content(self, file_content:list,
         file_id: str, chunk_size:int = 100, overlap_size:int=20):

@@ -14,5 +14,7 @@ def compute_context_hash(context: EducationalContext) -> str:
     Must stay byte-for-byte identical in both places, or the same input
     will hash differently depending on which caller computed it.
     """
+    # this way of hashing ensures the same hash will be generate for the same context
+    # every time the user will enter it
     payload = context.passage + context.question_config.model_dump_json()
     return hashlib.sha256(payload.encode("utf-8")).hexdigest()
