@@ -1,7 +1,8 @@
+import json
 import logging
 import uuid
 from typing import Optional
-
+from helpers.config import get_settings
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel
 from sqlalchemy.exc import MultipleResultsFound
@@ -10,9 +11,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from controllers.CRUD_Operations.evaluation_results import get_evaluation_by_question, save_evaluations
 from controllers.CRUD_Operations.learning_outcomes import get_all_outcomes
 from controllers.CRUD_Operations.question_lo_links import get_links_by_question
-from controllers.CRUD_Operations.questions import get_all_questions, get_question_by_id
+from controllers.CRUD_Operations.questions import get_accepted_questions, get_all_questions, get_question_by_id
 from graph.graph import run_pipeline
 from helpers.db import get_db
+from helpers.hashing import compute_context_hash
+from helpers.redis_client import get_cached, set_cached
 from models.evaluationResult import EvaluationResult as EvaluationResultORM
 from models.questions import Questions as QuestionsORM
 from routes.schemes.educationalContext import EducationalContext
@@ -31,15 +34,20 @@ dataset_router= APIRouter(
 
 @dataset_router.post("/generate")
 async def generate(payload: EducationalContext, db: AsyncSession = Depends(get_db)):
-    """Run the AI pipeline for one educational context.
+    """Run the AI pipeline for one educational context."""
 
-    All persistence now happens INSIDE `run_pipeline()` (graph/graph.py's
-    `store_node`/`log_and_discard_node`): only questions that come back
-    `accepted`/`needs_review` are ever saved — a batch where every question
-    is `rejected` touches the DB not at all. This route just calls the
-    pipeline and reports whatever the final state says was persisted vs
-    discarded; it owns no conversion/persistence logic itself.
-    """
+    # Checks Redis cache first using context hash. If cached, returns the cached result.
+    # Otherwise runs pipeline and caches the result.
+    settings = get_settings()
+    cache_key = "dataset_generate:" + compute_context_hash(payload)
+    try:
+        cached_result = await get_cached(cache_key)
+        if cached_result is not None:
+            logger.info("Serving /dataset/generate response from Redis cache.")
+            return json.loads(cached_result)
+    except Exception as exc:
+        logger.warning("Redis cache check failed: %s", exc)
+
     try:
         final_state = await run_pipeline(payload, db)
     except Exception as exc:
@@ -49,7 +57,7 @@ async def generate(payload: EducationalContext, db: AsyncSession = Depends(get_d
             detail=f"AI pipeline failed: {exc}",
         )
 
-    return {
+    result = {
         "learning_outcomes_created": final_state["persisted_learning_outcomes"],
         "questions_created": final_state["persisted_questions"],
         "links_created": final_state["persisted_links"],
@@ -57,6 +65,13 @@ async def generate(payload: EducationalContext, db: AsyncSession = Depends(get_d
         "questions_discarded": final_state["discarded_count"],
         "status_breakdown": final_state["status_breakdown"],
     }
+    # the storing of the context in redis for 24 hours(86400)
+    try:
+        await set_cached(cache_key, json.dumps(result), ttl_seconds=settings.REDIS_TTL)
+    except Exception as exc:
+        logger.warning("Redis cache write failed: %s", exc)
+
+    return result
 
 class EvaluateRequest(BaseModel):
     """Optional body for POST /dataset/evaluate.
@@ -251,5 +266,46 @@ async def evaluate(payload: EvaluateRequest | None = None, db: AsyncSession = De
     }
 
 @dataset_router.get("/export")
-async def export():
-    pass
+async def export(
+    difficulty: Optional[str] = None,
+    db: AsyncSession = Depends(get_db),
+):
+    """Export clean dataset containing accepted and needs_review records.
+
+    Filters questions by difficulty if provided. Includes learning outcome texts,
+    evaluation score, and validation status.
+    """
+    accepted_questions = await get_accepted_questions(db)
+    if difficulty:
+        accepted_questions = [q for q in accepted_questions if q.difficulty == difficulty]
+
+    all_outcomes = {lo.id: lo for lo in await get_all_outcomes(db)}
+    records = []
+
+    for q in accepted_questions:
+        links = await get_links_by_question(db, q.id)
+        linked_los = [all_outcomes.get(link.lo_id) for link in links if link.lo_id in all_outcomes]
+
+        try:
+            eval_res = await get_evaluation_by_question(db, q.id)
+        except MultipleResultsFound:
+            eval_res = None
+
+        record = {
+            "question_id": str(q.id),
+            "question_text": q.question_text,
+            "question_type": q.question_type,
+            "choices": q.choices,
+            "correct_answer": q.correct_answer,
+            "explanation": q.explanation,
+            "difficulty": q.difficulty,
+            "estimated_time_minutes": q.estimated_time_minutes,
+            "learning_outcome_ids": [str(link.lo_id) for link in links],
+            "learning_outcome_texts": [lo.text for lo in linked_los if lo],
+            "source_evidence": q.source_evidence,
+            "overall_evaluation_score": eval_res.overall_score if eval_res else None,
+            "validation_status": eval_res.status if eval_res else "needs_review",
+        }
+        records.append(record)
+
+    return records

@@ -67,7 +67,7 @@ async def process_endpoint(project_id :str, process_request: ProcessRequest):
 
 	process_controller= ProcessController(project_id=project_id)
 
-	file_content = process_controller.get_file_content(file_id=file_id)
+	file_content = await process_controller.get_file_content(file_id=file_id)
 
 	file_chunks = process_controller.process_file_content(
 		file_content=file_content,
