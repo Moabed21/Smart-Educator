@@ -48,7 +48,7 @@ async def get_accepted_questions(db: AsyncSession) -> list[Questions]:
         select(Questions)
         .join(EvaluationResult, EvaluationResult.question_id == Questions.id)
         .where(EvaluationResult.status.in_(["accepted", "needs_review"]))
-        .distinct()
+        .group_by(Questions.id)
     )
     return result.scalars().all()
 

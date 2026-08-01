@@ -4,8 +4,16 @@ from google import genai
 from helpers.config import get_settings
 from helpers.redis_client import get_cached, set_cached
 
-settings = get_settings()
-_client = genai.Client(api_key=settings.GEMINI_API_KEY)
+_client: genai.Client | None = None
+
+
+def _get_client() -> genai.Client:
+    """Lazily create the genai.Client, configured with GEMINI_API_KEY, once per process."""
+    global _client
+    if _client is None:
+        _client = genai.Client(api_key=get_settings().GEMINI_API_KEY)
+    return _client
+
 
 _EMBEDDING_MODEL = "text-embedding-004"
 _CACHE_TTL_SECONDS = 60 * 60 * 24  # 24 hours
@@ -31,7 +39,7 @@ async def embed_text(text: str) -> list[float]:
     if cached is not None:
         return json.loads(cached)
 
-    result = await _client.aio.models.embed_content(
+    result = await _get_client().aio.models.embed_content(
         model=_EMBEDDING_MODEL,
         contents=text,
     )
@@ -47,7 +55,7 @@ async def embed_batch(texts: list[str]) -> list[list[float]]:
     than calling embed_text() in a loop). Not cached — used for bulk
     operations where texts are usually new each time.
     """
-    result = await _client.aio.models.embed_content(
+    result = await _get_client().aio.models.embed_content(
         model=_EMBEDDING_MODEL,
         contents=texts,
     )

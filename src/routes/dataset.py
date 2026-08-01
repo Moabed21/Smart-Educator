@@ -270,17 +270,11 @@ async def export(
     Filters questions by difficulty if provided. Includes learning outcome texts,
     evaluation score, and validation status.
     """
-    # Pillar 3: Concurrent async query execution via asyncio.gather
-    raw_questions, raw_outcomes = await asyncio.gather(
-        get_accepted_questions(db),
-        get_all_outcomes(db),
-    )
-
-    accepted_questions = raw_questions
+    accepted_questions = await get_accepted_questions(db)
     if difficulty:
         accepted_questions = [q for q in accepted_questions if q.difficulty == difficulty]
 
-    all_outcomes = {lo.id: lo for lo in raw_outcomes}
+    all_outcomes = {lo.id: lo for lo in await get_all_outcomes(db)}
     records = []
 
     for q in accepted_questions:

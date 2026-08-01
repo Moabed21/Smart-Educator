@@ -20,11 +20,8 @@ async def build_training_pairs(db: AsyncSession = Depends(get_db)):
 
     Exports pairs to assets/training_pairs.jsonl and returns pair statistics.
     """
-    accepted_questions, raw_outcomes = await asyncio.gather(
-        get_accepted_questions(db),
-        get_all_outcomes(db),
-    )
-    all_outcomes = {lo.id: lo for lo in raw_outcomes}
+    accepted_questions = await get_accepted_questions(db)
+    all_outcomes = {lo.id: lo for lo in await get_all_outcomes(db)}
 
     questions_with_lo: list[QuestionWithLO] = []
 
