@@ -14,9 +14,9 @@ def _get_client() -> genai.Client:
         _client = genai.Client(api_key=get_settings().GEMINI_API_KEY)
     return _client
 
-
+settings = get_settings()
 _EMBEDDING_MODEL = "text-embedding-004"
-_CACHE_TTL_SECONDS = 60 * 60 * 24  # 24 hours
+_CACHE_TTL_SECONDS = settings.REDIS_TTL  # 24 hours
 
 
 def _make_cache_key(text: str) -> str:
