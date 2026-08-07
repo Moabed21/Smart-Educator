@@ -4,3 +4,10 @@ __pycache__/
 files/
 pyrightconfig.json
 venv/
+.venv/
+
+# Presentation test artifacts (generated, not source)
+presentation_results.json
+presentation_report.html
+tester/presentation_results.json
+tester/presentation_report.html

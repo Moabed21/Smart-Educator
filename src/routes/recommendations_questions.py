@@ -1,7 +1,5 @@
 import uuid
-from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, status
-from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from controllers.CRUD_Operations.question_lo_links import get_links_by_question
