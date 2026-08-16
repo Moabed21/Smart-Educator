@@ -20,10 +20,10 @@ from typing import TypedDict
 from langgraph.graph import END, StateGraph
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from controllers.CRUD_Operations.evaluation_results import save_evaluations
-from controllers.CRUD_Operations.learning_outcomes import save_outcomes
-from controllers.CRUD_Operations.question_lo_links import save_links
-from controllers.CRUD_Operations.questions import save_questions
+from crud.evaluation_results import save_evaluations
+from crud.learning_outcomes import save_outcomes
+from crud.question_lo_links import save_links
+from crud.questions import save_questions
 from models.evaluationResult import EvaluationResult as EvaluationResultORM
 from models.learningOutcome import LearningOutcome as LearningOutcomeORM
 from models.questionL0Link import QuestionLOLink as QuestionLOLinkORM
@@ -278,6 +278,32 @@ async def store_node(state: GraphState) -> dict:
             )
         )
     await save_evaluations(db, orm_evaluations)
+
+    # ── Auto-index kept questions into ChromaDB Vector Store ──
+    if orm_questions:
+        try:
+            from services.embedding_service import embed_batch
+            from services.vector_store import VectorStoreService
+
+            q_texts = [q.question_text for q in orm_questions]
+            embeddings = await embed_batch(q_texts)
+
+            vector_ids = [str(q.id) for q in orm_questions]
+            metadatas = [
+                {
+                    "question_text": q.question_text,
+                    "difficulty": q.difficulty,
+                    "question_type": q.question_type,
+                    "lo_ids": [str(link.lo_id) for link in orm_links if link.question_id == q.id],
+                }
+                for q in orm_questions
+            ]
+
+            vector_store = VectorStoreService()
+            vector_store.upsert_questions(ids=vector_ids, embeddings=embeddings, metadatas=metadatas)
+            logger.info("Indexed %d questions into ChromaDB vector store.", len(orm_questions))
+        except Exception as vec_exc:
+            logger.warning("Failed to auto-index questions into ChromaDB: %s", vec_exc)
 
     status_breakdown = {"accepted": 0, "needs_review": 0, "rejected": 0}
     for evaluation in evaluations:

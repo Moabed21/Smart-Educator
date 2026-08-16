@@ -4,27 +4,33 @@ from helpers.config import get_settings
 
 settings = get_settings()
 
-# async engine — uses asyncpg driver to talk to PostgreSQL without blocking
-engine = create_async_engine(settings.DATABASE_URL, echo=True)
+# Async PostgreSQL engine with production connection pooling & pre-ping health verification
+engine = create_async_engine(
+    settings.DATABASE_URL,
+    echo=settings.DB_ECHO,
+    pool_size=settings.DATABASE_POOL_SIZE,
+    max_overflow=settings.DATABASE_MAX_OVERFLOW,
+    pool_timeout=settings.DATABASE_POOL_TIMEOUT,
+    pool_recycle=settings.DATABASE_POOL_RECYCLE,
+    pool_pre_ping=True,
+)
 
-# session factory — produces one AsyncSession per request
+# Session factory producing isolated AsyncSessions per request
 AsyncSessionLocal = async_sessionmaker(engine, expire_on_commit=False)
 
+
 class Base(DeclarativeBase):
-    """
-    All ORM models inherit from this Base.
-    SQLAlchemy and Alembic use it to discover all tables.
-    """
+    """Declarative Base class for all SQLAlchemy ORM models."""
     pass
 
 
 async def get_db():
-    """FastAPI dependency — one DB session per request, auto-closed after."""
+    """FastAPI Dependency providing an async session per request with automatic cleanup."""
     async with AsyncSessionLocal() as session:
         yield session
 
 
 async def create_tables():
-    """Creates all tables on startup. For dev use — Alembic handles production."""
+    """Programmatic schema creation helper — used for ephemeral test suites only."""
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)

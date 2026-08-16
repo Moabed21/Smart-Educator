@@ -1,0 +1,1376 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart-Educator | منصة توليد وتقييم بنوك الأسئلة والاختبارات التكيفية</title>
+    <meta name="description" content="منصة ذكية قائمة على الذكاء الاصطناعي لتوليد الأسئلة، تقييمها، أداء الاختبارات التفاعلية، والتوصية التكيفية لنقاط الضعف">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0b0f19;
+            --bg-secondary: #111827;
+            --bg-card: rgba(17, 24, 39, 0.75);
+            --bg-card-hover: rgba(31, 41, 55, 0.85);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --border-active: rgba(99, 102, 241, 0.5);
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --primary-glow: rgba(99, 102, 241, 0.25);
+            --accent-cyan: #06b6d4;
+            --accent-emerald: #10b981;
+            --accent-amber: #f59e0b;
+            --accent-rose: #f43f5e;
+            --text-main: #f9fafb;
+            --text-muted: #9ca3af;
+            --text-dim: #6b7280;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+            --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Cairo', 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.12) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(6, 182, 212, 0.08) 0px, transparent 50%);
+            background-attachment: fixed;
+        }
+
+        /* ── Header & Navigation ── */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(16px);
+            background: rgba(11, 15, 25, 0.85);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text-main);
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-md);
+            background: linear-gradient(135deg, var(--primary), var(--accent-cyan));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 1.2rem;
+            box-shadow: 0 0 20px var(--primary-glow);
+        }
+
+        .brand-name {
+            font-size: 1.3rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .brand-badge {
+            background: rgba(99, 102, 241, 0.15);
+            color: var(--primary);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 20px;
+            margin-right: 8px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 4px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 8px 16px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .nav-btn:hover {
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .nav-btn.active {
+            color: #fff;
+            background: var(--primary);
+            box-shadow: 0 4px 12px var(--primary-glow);
+        }
+
+        .system-status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.85rem;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            padding: 6px 14px;
+            border-radius: 20px;
+            color: var(--accent-emerald);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--accent-emerald);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--accent-emerald);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(1.2); }
+        }
+
+        /* ── Main Container ── */
+        main {
+            flex: 1;
+            max-width: 1380px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── Glassmorphic Cards ── */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 1.75rem;
+            backdrop-filter: blur(12px);
+            box-shadow: var(--shadow-glass);
+            transition: border-color 0.25s ease;
+        }
+
+        .card:hover {
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-subtitle {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 4px;
+        }
+
+        /* ── Grid Layouts ── */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.25rem;
+        }
+
+        @media (max-width: 992px) {
+            .grid-2, .grid-3 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ── Form Controls ── */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 1.25rem;
+        }
+
+        .form-label {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .form-input, .form-textarea, .form-select {
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            color: var(--text-main);
+            padding: 10px 14px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .form-input:focus, .form-textarea:focus, .form-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-glow);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 140px;
+            line-height: 1.6;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: var(--radius-sm);
+            padding: 12px 24px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 14px var(--primary-glow);
+        }
+
+        .btn:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            box-shadow: none;
+        }
+
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+            border-color: var(--text-muted);
+        }
+
+        .btn-success {
+            background: var(--accent-emerald);
+            box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .btn-amber {
+            background: var(--accent-amber);
+            color: #111;
+            box-shadow: 0 4px 14px rgba(245, 158, 11, 0.3);
+        }
+
+        .btn-amber:hover {
+            background: #d97706;
+            color: #fff;
+        }
+
+        /* ── Pipeline Steps Visualizer ── */
+        .pipeline-tracker {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin: 1.5rem 0;
+        }
+
+        .pipeline-tracker::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 5%;
+            right: 5%;
+            height: 2px;
+            background: var(--border-color);
+            z-index: 1;
+        }
+
+        .pipeline-step {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .step-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            transition: all 0.3s ease;
+        }
+
+        .pipeline-step.active .step-circle {
+            border-color: var(--primary);
+            color: #fff;
+            background: var(--primary);
+            box-shadow: 0 0 16px var(--primary-glow);
+        }
+
+        .pipeline-step.completed .step-circle {
+            border-color: var(--accent-emerald);
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--accent-emerald);
+        }
+
+        .step-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-dim);
+            text-align: center;
+        }
+
+        .pipeline-step.active .step-label {
+            color: var(--text-main);
+        }
+
+        /* ── Result Badges & Question Cards ── */
+        .status-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .status-accepted {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .status-needs_review {
+            background: rgba(245, 158, 11, 0.15);
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .status-rejected {
+            background: rgba(244, 63, 94, 0.15);
+            color: #f87171;
+            border: 1px solid rgba(244, 63, 94, 0.3);
+        }
+
+        .question-card {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .question-card:hover {
+            border-color: var(--border-active);
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .mcq-option {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            padding: 10px 14px;
+            border-radius: var(--radius-sm);
+            font-size: 0.92rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .mcq-option:hover {
+            background: rgba(255, 255, 255, 0.07);
+            border-color: var(--primary);
+        }
+
+        .mcq-option.selected {
+            background: rgba(99, 102, 241, 0.2);
+            border-color: var(--primary);
+            color: #fff;
+            font-weight: 700;
+        }
+
+        .mcq-option.correct {
+            border-color: rgba(16, 185, 129, 0.5);
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            font-weight: 700;
+        }
+
+        .mcq-option.wrong {
+            border-color: rgba(244, 63, 94, 0.5);
+            background: rgba(244, 63, 94, 0.15);
+            color: #f87171;
+            font-weight: 700;
+        }
+
+        .eval-score-bar-wrap {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .eval-score-bar {
+            flex: 1;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .eval-score-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent-cyan));
+            border-radius: 3px;
+        }
+
+        /* ── Loading Spinner ── */
+        .spinner {
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top: 3px solid #fff;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* ── Footer ── */
+        footer {
+            margin-top: auto;
+            border-top: 1px solid var(--border-color);
+            padding: 1.25rem 2rem;
+            text-align: center;
+            color: var(--text-dim);
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ── Header ── -->
+    <header>
+        <div class="brand-logo">
+            <div class="logo-icon">SE</div>
+            <div>
+                <span class="brand-name">Smart-Educator</span>
+                <span class="brand-badge">v0.1.0 Production</span>
+            </div>
+        </div>
+
+        <nav class="nav-tabs">
+            <button class="nav-btn active" onclick="switchTab('tab-generate')">⚡ توليد وتقييم</button>
+            <button class="nav-btn" onclick="switchTab('tab-quiz')">📝 اختبار تفاعلي وتكيفي</button>
+            <button class="nav-btn" onclick="switchTab('tab-recommend')">🔍 محرك التوصيات</button>
+            <button class="nav-btn" onclick="switchTab('tab-dataset')">📁 بنك الأسئلة الشامل</button>
+            <button class="nav-btn" onclick="switchTab('tab-training')">🎯 أزواج التدريب</button>
+            <button class="nav-btn" onclick="switchTab('tab-system')">🩺 صحة النظام</button>
+        </nav>
+
+        <div class="system-status-indicator" id="header-status">
+            <div class="status-dot"></div>
+            <span>النظام جاهز</span>
+        </div>
+    </header>
+
+    <!-- ── Main Workspace ── -->
+    <main>
+
+        <!-- ── TAB 1: GENERATE & EVALUATE ── -->
+        <section id="tab-generate" class="tab-content active">
+            <div class="grid-2">
+                
+                <!-- Left Column: Input Form -->
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h2 class="card-title">📝 بيانات الدرس والسياق التعليمي</h2>
+                            <p class="card-subtitle">أدخل النص وسيقوم النموذج باستخراج مخرجات التعلم وبناء الأسئلة وتقييمها</p>
+                        </div>
+                        <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                            <button type="button" class="btn btn-outline" onclick="loadSamplePrompt('physics')" style="font-size: 0.78rem; padding: 5px 10px;">⚛️ فيزياء</button>
+                            <button type="button" class="btn btn-outline" onclick="loadSamplePrompt('chemistry')" style="font-size: 0.78rem; padding: 5px 10px;">🧪 كيمياء</button>
+                            <button type="button" class="btn btn-outline" onclick="loadSamplePrompt('biology')" style="font-size: 0.78rem; padding: 5px 10px;">🌿 أحياء</button>
+                            <button type="button" class="btn btn-outline" onclick="loadSamplePrompt('multi')" style="font-size: 0.78rem; padding: 5px 10px; border-color: var(--primary);">📚 حزمة دروس متعددة</button>
+                        </div>
+                    </div>
+
+                    <form id="generate-form" onsubmit="handleGenerate(event)">
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label class="form-label">المادة الدراسية (Subject)</label>
+                                <input type="text" id="gen-subject" class="form-input" placeholder="مثال: الفيزياء" value="الفيزياء" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">الصف الدراسي (Grade Level)</label>
+                                <input type="text" id="gen-grade" class="form-input" placeholder="مثال: الصف العاشر" value="الصف العاشر" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">النص التعليمي أو المحتوى (Passage)</label>
+                            <textarea id="gen-passage" class="form-textarea" placeholder="الصق النص التعليمي هنا..." required>ينص قانون نيوتن الأول في الحركة على أن الجسم الساكن يبقى ساكناً، والجسم المتحرك في خط مستقيم بسرعة ثابتة يبقى كذلك ما لم تؤثر فيه قوة محصلة تغير من حالته الحركية. ويسمى هذا القانون أيضاً بقانون القصور الذاتي، حيث يمثل القصور الذاتي ممانعة الجسم لتغيير حالته الحركية، وتعتمد هذه الممانعة بشكل طردي على كتلة الجسم.</textarea>
+                        </div>
+
+                        <div class="card" style="background: rgba(0,0,0,0.15); margin-bottom: 1.25rem; padding: 1.25rem;">
+                            <h3 style="font-size: 0.95rem; margin-bottom: 1rem;">⚙️ إعدادات الأسئلة وتوزيع الصعوبة</h3>
+                            
+                            <div class="grid-3" style="margin-bottom: 1rem;">
+                                <div class="form-group">
+                                    <label class="form-label">اختيار من متعدد (MCQ)</label>
+                                    <input type="number" id="gen-mcq" class="form-input" value="2" min="0" max="10">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">صح أو خطأ (T/F)</label>
+                                    <input type="number" id="gen-tf" class="form-input" value="1" min="0" max="10">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">إجابة قصيرة (Short)</label>
+                                    <input type="number" id="gen-sa" class="form-input" value="1" min="0" max="10">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 4px;">
+                                    <span>نسبة السهل: <b id="val-easy" style="color:var(--accent-emerald);">0.5</b></span>
+                                    <span>نسبة المتوسط: <b id="val-med" style="color:var(--accent-amber);">0.3</b></span>
+                                    <span>نسبة الصعب: <b id="val-hard" style="color:var(--accent-rose);">0.2</b></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" id="btn-submit-generate" class="btn" style="width: 100%;">
+                            <span>بدء المعالجة والتوليد الذكي</span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Right Column: Real-time Visualizer & Results -->
+                <div class="card" style="display: flex; flex-direction: column;">
+                    <div class="card-header">
+                        <div>
+                            <h2 class="card-title">📊 نتائج خط المعالجة (Pipeline Results)</h2>
+                            <p class="card-subtitle">متابعة مراحل LangGraph واستخراج المخرجات وتقييم الأسئلة</p>
+                        </div>
+                    </div>
+
+                    <!-- Pipeline Visualizer -->
+                    <div class="pipeline-tracker" id="pipeline-tracker">
+                        <div class="pipeline-step active" id="step-1">
+                            <div class="step-circle">1</div>
+                            <div class="step-label">تحليل السياق</div>
+                        </div>
+                        <div class="pipeline-step" id="step-2">
+                            <div class="step-circle">2</div>
+                            <div class="step-label">استخراج LOs</div>
+                        </div>
+                        <div class="pipeline-step" id="step-3">
+                            <div class="step-circle">3</div>
+                            <div class="step-label">توليد الأسئلة</div>
+                        </div>
+                        <div class="pipeline-step" id="step-4">
+                            <div class="step-circle">4</div>
+                            <div class="step-label">الربط الدلالي</div>
+                        </div>
+                        <div class="pipeline-step" id="step-5">
+                            <div class="step-circle">5</div>
+                            <div class="step-label">التقييم والحفظ</div>
+                        </div>
+                    </div>
+
+                    <!-- Results Output Box -->
+                    <div id="generation-results-container" style="flex: 1; overflow-y: auto; max-height: 480px;">
+                        <div style="text-align: center; color: var(--text-dim); padding: 3rem 1rem;">
+                            <div style="font-size: 2.5rem; margin-bottom: 1rem;">🤖</div>
+                            <p>اضغط على "بدء المعالجة والتوليد الذكي" لعرض النتائج التفصيلية هنا.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ── TAB 2: INTERACTIVE QUIZ & ADAPTIVE LEARNING ── -->
+        <section id="tab-quiz" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <h2 class="card-title">📝 الاختبار التفاعلي والتوصية التكيفية (Adaptive Assessment)</h2>
+                        <p class="card-subtitle">أجب عن الأسئلة وسيقوم النظام بتشخيص مستواك وتوليد توصيات موجهة لنقاط ضعفك عبر ChromaDB</p>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-outline" onclick="startNewQuiz(5)">🎲 اختبار 5 أسئلة عشوائية</button>
+                        <button class="btn btn-outline" onclick="startNewQuiz()">📚 اختبار شامل</button>
+                    </div>
+                </div>
+
+                <!-- Quiz Container -->
+                <div id="quiz-active-container">
+                    <div style="text-align: center; color: var(--text-dim); padding: 3rem 1rem;">
+                        <div style="font-size: 2.5rem; margin-bottom: 1rem;">🎯</div>
+                        <h3 style="font-size: 1.1rem; color: var(--text-main); margin-bottom: 0.5rem;">جاهز لاختبار فهمك؟</h3>
+                        <p>اضغط على "اختبار 5 أسئلة عشوائية" أو "اختبار شامل" لبدء الاختبار التفاعلي.</p>
+                    </div>
+                </div>
+
+                <!-- Adaptive Diagnostic & Recommendation Results -->
+                <div id="quiz-report-container" style="display: none; margin-top: 2rem;"></div>
+            </div>
+        </section>
+
+        <!-- ── TAB 3: RECOMMENDATION SEARCH ── -->
+        <section id="tab-recommend" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <h2 class="card-title">🔍 البحث الدلالي والتوصية المباشرة (Vector Search)</h2>
+                        <p class="card-subtitle">البحث في قاعدة بيانات ChromaDB باستخدام المتجهات الدلالية المطابقة للمعنى</p>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 12px; margin-bottom: 1.5rem;">
+                    <input type="text" id="rec-query" class="form-input" style="flex: 1;" placeholder="اكتب استعلام البحث أو المفهوم (مثال: ما هو قانون القصور الذاتي لنيوتن؟)">
+                    <select id="rec-top-k" class="form-select" style="width: 130px;">
+                        <option value="3">أفضل 3 أسئلة</option>
+                        <option value="5" selected>أفضل 5 أسئلة</option>
+                        <option value="10">أفضل 10 أسئلة</option>
+                    </select>
+                    <button class="btn" onclick="handleRecommend()">بحث ذكي</button>
+                </div>
+
+                <div id="recommend-results-container">
+                    <div style="text-align: center; color: var(--text-dim); padding: 2rem;">
+                        <p>أدخل استفساراً دلالياً للبحث في بنك الأسئلة المخزن في ChromaDB.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── TAB 4: DATASET EXPLORER ── -->
+        <section id="tab-dataset" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <h2 class="card-title">📁 مستودع بنك الأسئلة التراكمي (Database Bank)</h2>
+                        <p class="card-subtitle">يعرض جميع الأسئلة المعتمدة المحفوظة في قاعدة بيانات PostgreSQL عبر كافة جلسات التوليد</p>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-outline" onclick="loadDataset()">🔄 تحديث القائمة</button>
+                        <button class="btn btn-success" onclick="downloadDatasetJson()">📥 تصدير JSON</button>
+                    </div>
+                </div>
+
+                <div id="dataset-container">
+                    <div style="text-align: center; color: var(--text-dim); padding: 2rem;">
+                        <p>اضغط على "تحديث القائمة" لجلب أحدث الأسئلة المخزنة في قاعدة البيانات.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── TAB 5: TRAINING PAIRS ── -->
+        <section id="tab-training" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <h2 class="card-title">🎯 توليد أزواج التدريب للضبط الدقيق (Fine-Tuning Pairs)</h2>
+                        <p class="card-subtitle">بناء أزواج أسئلة (إيجابية، سلبية، وسلبية صعبة Hard-Negatives) لتدريب نماذج التضمين</p>
+                    </div>
+                    <button class="btn" onclick="handleBuildPairs()">🚀 بناء الأزواج الآن</button>
+                </div>
+
+                <div id="pairs-results-container">
+                    <div style="text-align: center; color: var(--text-dim); padding: 2rem;">
+                        <p>اضغط على الزر أعلاه لمعالجة الأسئلة المعتمدة وتوليد ملف `training_pairs.jsonl`.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── TAB 6: SYSTEM HEALTH ── -->
+        <section id="tab-system" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <h2 class="card-title">🩺 فحص صحة وجاهزية الخدمات (Readiness Probes)</h2>
+                        <p class="card-subtitle">فحص مباشر للاتصال بقاعدة بيانات PostgreSQL، خادم Redis، وخادم ChromaDB</p>
+                    </div>
+                    <button class="btn btn-outline" onclick="checkSystemHealth()">🔄 فحص الآن</button>
+                </div>
+
+                <div id="health-results-container">
+                    <div style="text-align: center; color: var(--text-dim); padding: 2rem;">
+                        <p>جاري فحص الاتصال بالخدمات...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ── Footer ── -->
+    <footer>
+        Smart-Educator Engine — Designed for High-Performance Assessment Generation & Adaptive Learning
+    </footer>
+
+    <!-- ── Interactive JavaScript Application ── -->
+    <script>
+        // ── Navigation Tab Switcher ──
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            
+            const targetTab = document.getElementById(tabId);
+            if (targetTab) targetTab.classList.add('active');
+            
+            const activeBtn = Array.from(document.querySelectorAll('.nav-btn')).find(b => b.getAttribute('onclick')?.includes(tabId));
+            if (activeBtn) activeBtn.classList.add('active');
+
+            if (tabId === 'tab-system') checkSystemHealth();
+            if (tabId === 'tab-dataset') loadDataset();
+        }
+
+        // ── Multi-Sample Prompt Loader ──
+        function loadSamplePrompt(type = 'chemistry') {
+            const subjectEl = document.getElementById('gen-subject');
+            const gradeEl = document.getElementById('gen-grade');
+            const passageEl = document.getElementById('gen-passage');
+
+            if (type === 'physics') {
+                subjectEl.value = "الفيزياء";
+                gradeEl.value = "الصف العاشر";
+                passageEl.value = `ينص قانون نيوتن الأول في الحركة على أن الجسم الساكن يبقى ساكناً، والجسم المتحرك في خط مستقيم بسرعة ثابتة يبقى كذلك ما لم تؤثر فيه قوة محصلة تغير من حالته الحركية. ويسمى هذا القانون أيضاً بقانون القصور الذاتي، حيث يمثل القصور الذاتي ممانعة الجسم لتغيير حالته الحركية، وتعتمد هذه الممانعة بشكل طردي على كتلة الجسم.`;
+            } else if (type === 'biology') {
+                subjectEl.value = "الأحياء";
+                gradeEl.value = "الصف العاشر";
+                passageEl.value = `تعتبر الخلية الوحدة الأساسية للتركيب والوظيفة في الكائنات الحية. وتقوم النباتات الخضراء بعملية البناء الضوئي داخل عضيات متخصصة تسمى البلاستيدات الخضراء (Chloroplasts) والتي تحتوي على صبغة الكلوروفيل، حيث تمتص ضوء الشمس والماء وثاني أكسيد الكربون لإنتاج سكر الجلوكوز والأكسجين: 6CO2 + 6H2O + ضوء -> C6H12O6 + 6O2.`;
+            } else if (type === 'multi') {
+                subjectEl.value = "العلوم المتكاملة (حزمة متعددة الدروس)";
+                gradeEl.value = "الصف العاشر";
+                passageEl.value = `الوحدة الشاملة:
+الدرس الأول (الفيزياء): ينص قانون نيوتن الأول على أن الجسم الساكن يبقى ساكناً والجسم المتحرك بسرعة ثابتة يبقى كذلك ما لم تؤثر فيه قوة محصلة (القصور الذاتي).
+الدرس الثاني (الكيمياء): تنشأ الروابط الأيونية عند انتقال إلكترون من فلز إلى لافلز مثل NaCl، بينما تنشأ الروابط التساهمية عند تشارك الإلكترونات للوصول للاستقرار الثماني مثل H2O.
+الدرس الثالث (الأحياء): تقوم النباتات بالبناء الضوئي داخل البلاستيدات الخضراء لإنتاج الجلوكوز والأكسجين من الماء وثاني أكسيد الكربون.`;
+            } else {
+                subjectEl.value = "الكيمياء";
+                gradeEl.value = "الصف العاشر";
+                passageEl.value = `نظرية بور لذرة الهيدروجين: يُعَدُّ الضوءُ المصدرَ الرئيسَ للمعلوماتِ التي استندتْ إليها النظرياتُ الحديثةُ في تفسيرِ بنيةِ الذرةِ؛ فقد لاحظَ العلماءُ انبعاثَ الضوءِ من بعضِ العناصرِ عندَ تسخينِها. تضمنت نظرية بور افتراضين أساسيين: الافتراض الأول يمتلك الإلكترون مقداراً محدداً من الطاقة يساوي طاقة المستوى الموجود فيه. الافتراض الثاني تتغير طاقة الإلكترون عند انتقاله بين مستويات الطاقة حيث ينبعث الضوء عند الهبوط لمستوى أقل.`;
+            }
+        }
+
+        // ── Generate Pipeline Handler ──
+        async function handleGenerate(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btn-submit-generate');
+            const container = document.getElementById('generation-results-container');
+            
+            btn.disabled = true;
+            btn.innerHTML = `<div class="spinner"></div> جاري تشغيل خط المعالجة...`;
+
+            // Reset visualizer
+            const steps = [1, 2, 3, 4, 5];
+            steps.forEach(s => document.getElementById(`step-${s}`).className = 'pipeline-step');
+            document.getElementById('step-1').className = 'pipeline-step active';
+
+            container.innerHTML = `
+                <div style="text-align: center; padding: 3rem 1rem;">
+                    <div class="spinner" style="width: 32px; height: 32px; margin: 0 auto 1.5rem;"></div>
+                    <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem;">جاري تنفيذ مراحل الذكاء الاصطناعي...</h3>
+                    <p style="color: var(--text-muted); font-size: 0.85rem;">استخراج مخرجات التعلم ➔ توليد الأسئلة ➔ الربط الدلالي (SBERT) ➔ التحكيم (LLM-as-Judge)</p>
+                </div>
+            `;
+
+            const payload = {
+                subject: document.getElementById('gen-subject').value,
+                grade_level: document.getElementById('gen-grade').value,
+                passage: document.getElementById('gen-passage').value,
+                question_config: {
+                    mcq_count: parseInt(document.getElementById('gen-mcq').value) || 2,
+                    true_false_count: parseInt(document.getElementById('gen-tf').value) || 1,
+                    short_answer_count: parseInt(document.getElementById('gen-sa').value) || 1
+                },
+                difficulty_distribution: {
+                    easy: 0.5,
+                    medium: 0.3,
+                    hard: 0.2
+                }
+            };
+
+            try {
+                const response = await fetch('/api/v1/dataset/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.detail || data.error || 'فشلت عملية المعالجة');
+                }
+
+                // Complete all steps in visualizer
+                steps.forEach(s => document.getElementById(`step-${s}`).className = 'pipeline-step completed');
+
+                // Render result summary
+                container.innerHTML = `
+                    <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: var(--radius-md); padding: 1.25rem; margin-bottom: 1.5rem;">
+                        <h3 style="color: var(--accent-emerald); font-size: 1.1rem; margin-bottom: 8px;">✨ اكتملت جلسة التوليد بنجاح!</h3>
+                        <div class="grid-3" style="font-size: 0.88rem; margin-top: 10px;">
+                            <div>مخرجات التعلم: <b>${data.learning_outcomes_created}</b></div>
+                            <div>الأسئلة المنشأة: <b>${data.questions_created}</b></div>
+                            <div>الروابط الدلالية: <b>${data.links_created}</b></div>
+                            <div>التقييمات المحفوظة: <b>${data.evaluations_created}</b></div>
+                            <div>الأسئلة المستبعدة: <b>${data.questions_discarded}</b></div>
+                            <div>مقبول / مراجعة: <b>${data.status_breakdown?.accepted || 0} / ${data.status_breakdown?.needs_review || 0}</b></div>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 10px; justify-content: center;">
+                        <button class="btn btn-success" onclick="switchTab('tab-quiz'); startNewQuiz(${data.questions_created});">📝 خوض اختبار على هذه الأسئلة الآن</button>
+                        <button class="btn btn-outline" onclick="switchTab('tab-dataset')">📁 معاينة بنك الأسئلة الشامل</button>
+                    </div>
+                `;
+            } catch (err) {
+                container.innerHTML = `
+                    <div style="background: rgba(244, 63, 94, 0.1); border: 1px solid rgba(244, 63, 94, 0.25); border-radius: var(--radius-md); padding: 1.25rem;">
+                        <h3 style="color: var(--accent-rose); font-size: 1rem; margin-bottom: 6px;">❌ حدث خطأ أثناء المعالجة</h3>
+                        <p style="color: var(--text-muted); font-size: 0.85rem;">${err.message}</p>
+                    </div>
+                `;
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<span>بدء المعالجة والتوليد الذكي</span>`;
+            }
+        }
+
+        // ── INTERACTIVE QUIZ & ADAPTIVE RECOMMENDATION ENGINE ──
+        let currentQuizQuestions = [];
+        let userQuizAnswers = {};
+
+        async function startNewQuiz(limit = null) {
+            const container = document.getElementById('quiz-active-container');
+            const reportContainer = document.getElementById('quiz-report-container');
+            reportContainer.style.display = 'none';
+
+            container.innerHTML = `<div style="text-align: center; padding: 2rem;"><div class="spinner" style="margin:0 auto 1rem;"></div>جاري تجهيز أسئلة الاختبار...</div>`;
+
+            try {
+                const response = await fetch('/api/v1/dataset/export');
+                const allQuestions = await response.json();
+
+                if (!allQuestions || allQuestions.length === 0) {
+                    container.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 2rem;">لا توجد أسئلة متوفرة حالياً. يرجى توليد أسئلة أولاً من تبويب "توليد وتقييم".</div>`;
+                    return;
+                }
+
+                // Shuffle questions
+                const shuffled = [...allQuestions].sort(() => 0.5 - Math.random());
+                currentQuizQuestions = limit ? shuffled.slice(0, limit) : shuffled;
+                userQuizAnswers = {};
+
+                renderQuizForm();
+            } catch (err) {
+                container.innerHTML = `<div style="color: var(--accent-rose); padding: 1rem;">❌ خطأ في تحميل الأسئلة: ${err.message}</div>`;
+            }
+        }
+
+        function renderQuizForm() {
+            const container = document.getElementById('quiz-active-container');
+            container.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; background: rgba(255,255,255,0.03); padding: 10px 16px; border-radius: var(--radius-sm);">
+                    <span style="font-weight: 700;">عدد أسئلة الاختبار: ${currentQuizQuestions.length}</span>
+                    <span style="color: var(--accent-cyan); font-size: 0.9rem;">اختر الإجابة المناسبة لكل سؤال ثم اضغط على تسليم الاختبار</span>
+                </div>
+
+                <form id="quiz-form" onsubmit="handleGradeQuiz(event)">
+                    ${currentQuizQuestions.map((q, idx) => `
+                        <div class="question-card" id="quiz-card-${idx}">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                <div style="font-weight: 700; font-size: 1.05rem;">
+                                    <span style="color: var(--primary); margin-left: 8px;">س${idx + 1}:</span>
+                                    ${q.question_text}
+                                </div>
+                                <span class="status-badge" style="background: rgba(255,255,255,0.05); color: var(--text-muted);">${q.difficulty}</span>
+                            </div>
+
+                            ${q.choices && q.choices.length ? `
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px;">
+                                    ${q.choices.map((choice, cIdx) => `
+                                        <div class="mcq-option" onclick="selectQuizChoice(${idx}, '${choice.replace(/'/g, "\\'")}', this)">
+                                            <span>⚪</span> ${choice}
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            ` : `
+                                <div style="margin-top: 8px;">
+                                    <input type="text" class="form-input" style="width: 100%;" placeholder="اكتب إجابتك هنا..." oninput="userQuizAnswers[${idx}] = this.value.trim()">
+                                </div>
+                            `}
+                        </div>
+                    `).join('')}
+
+                    <div style="text-align: center; margin-top: 1.5rem;">
+                        <button type="submit" class="btn btn-success" style="padding: 14px 36px; font-size: 1.05rem;">
+                            🏁 إنهاء وتسليم الاختبار للحصول على التقييم التكيفي
+                        </button>
+                    </div>
+                </form>
+            `;
+        }
+
+        function selectQuizChoice(qIdx, choice, el) {
+            userQuizAnswers[qIdx] = choice;
+            const parent = el.closest('.question-card');
+            parent.querySelectorAll('.mcq-option').forEach(opt => opt.classList.remove('selected'));
+            el.classList.add('selected');
+        }
+
+        function handleGradeQuiz(e) {
+            e.preventDefault();
+            let score = 0;
+            let total = currentQuizQuestions.length;
+            let weakOutcomes = [];
+
+            currentQuizQuestions.forEach((q, idx) => {
+                const userAns = (userQuizAnswers[idx] || '').trim();
+                const correctAns = (q.correct_answer || '').trim();
+                const card = document.getElementById(`quiz-card-${idx}`);
+
+                const isCorrect = userAns.toLowerCase() === correctAns.toLowerCase();
+
+                if (isCorrect) {
+                    score++;
+                } else {
+                    // Record weak concept / learning outcome for adaptive recommendation
+                    if (q.learning_outcome_texts && q.learning_outcome_texts.length) {
+                        weakOutcomes.push(...q.learning_outcome_texts);
+                    } else {
+                        weakOutcomes.push(q.question_text);
+                    }
+                }
+
+                // Highlight correct/wrong in card
+                if (card) {
+                    const options = card.querySelectorAll('.mcq-option');
+                    options.forEach(opt => {
+                        const optText = opt.innerText.replace('⚪', '').replace('✓', '').replace('✕', '').trim();
+                        if (optText === correctAns) {
+                            opt.classList.add('correct');
+                            opt.innerHTML = `<span>✓</span> ${optText}`;
+                        } else if (optText === userAns) {
+                            opt.classList.add('wrong');
+                            opt.innerHTML = `<span>✕</span> ${optText}`;
+                        }
+                    });
+
+                    // Add explanation box
+                    const expDiv = document.createElement('div');
+                    expDiv.style.cssText = `background: rgba(255,255,255,0.03); border-top: 1px solid var(--border-color); padding: 10px 14px; border-radius: var(--radius-sm); font-size: 0.85rem; color: var(--text-muted); margin-top: 8px;`;
+                    expDiv.innerHTML = `💡 <b>الإجابة الصحيحة:</b> ${correctAns}<br>📖 <b>الشرح والتفسير:</b> ${q.explanation}`;
+                    card.appendChild(expDiv);
+                }
+            });
+
+            // Scroll to report
+            const percentage = Math.round((score / total) * 100);
+            const reportContainer = document.getElementById('quiz-report-container');
+            reportContainer.style.display = 'block';
+
+            // Distinct weak topics
+            const uniqueWeakTopics = [...new Set(weakOutcomes)];
+
+            reportContainer.innerHTML = `
+                <div class="card" style="background: rgba(99, 102, 241, 0.08); border: 2px solid var(--primary); padding: 2rem;">
+                    <div style="text-align: center; margin-bottom: 1.5rem;">
+                        <div style="font-size: 3rem; margin-bottom: 8px;">${percentage >= 80 ? '🏆' : (percentage >= 50 ? '📈' : '💡')}</div>
+                        <h2 style="font-size: 1.6rem; color: var(--text-main);">نتيجتك في الاختبار: ${score} من ${total} (${percentage}%)</h2>
+                        <p style="color: var(--text-muted); margin-top: 6px;">
+                            ${percentage >= 80 ? 'أداء ممتاز! لقد استوعبت المفاهيم الأساسية بنجاح.' : 'تم تحديد بعض المفاهيم التي تحتاج إلى تقوية ومراجعة.'}
+                        </p>
+                    </div>
+
+                    ${uniqueWeakTopics.length ? `
+                        <div style="background: rgba(244, 63, 94, 0.1); border: 1px solid rgba(244, 63, 94, 0.3); border-radius: var(--radius-md); padding: 1.25rem; margin-bottom: 1.5rem;">
+                            <h3 style="color: var(--accent-rose); font-size: 1rem; margin-bottom: 8px;">⚠️ المفاهيم ومخرجات التعلم التي تحتاج إلى تعزيز:</h3>
+                            <ul style="padding-right: 1.5rem; font-size: 0.9rem; color: var(--text-main);">
+                                ${uniqueWeakTopics.map(t => `<li style="margin-bottom: 4px;">${t}</li>`).join('')}
+                            </ul>
+                        </div>
+
+                        <div style="text-align: center;">
+                            <button class="btn btn-amber" onclick="generateAdaptivePractice('${uniqueWeakTopics[0].replace(/'/g, "\\'")}')" style="padding: 12px 28px; font-size: 1rem;">
+                                🎯 توليد أسئلة موجهة لتقوية نقاط الضعف عبر ChromaDB
+                            </button>
+                        </div>
+                    ` : `
+                        <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: var(--radius-md); padding: 1.25rem; text-align: center;">
+                            <span style="color: var(--accent-emerald); font-weight: 700;">🎉 تهانينا! لم يتم رصد أي نقاط ضعف في هذا الاختبار.</span>
+                        </div>
+                    `}
+
+                    <!-- Recommended Practice Questions Container -->
+                    <div id="adaptive-practice-results" style="margin-top: 1.5rem;"></div>
+                </div>
+            `;
+
+            reportContainer.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        async function generateAdaptivePractice(conceptQuery) {
+            const practiceContainer = document.getElementById('adaptive-practice-results');
+            practiceContainer.innerHTML = `<div style="text-align: center; padding: 1.5rem;"><div class="spinner" style="margin:0 auto 1rem;"></div>جاري استرجاع أسئلة تدريبية مخصصة لنقاط ضعفك من ChromaDB...</div>`;
+
+            try {
+                const response = await fetch('/api/v1/recommendations/questions', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query: conceptQuery, top_k: 3 })
+                });
+
+                const data = await response.json();
+
+                if (!data.recommendations || !data.recommendations.length) {
+                    practiceContainer.innerHTML = `<div style="color: var(--text-muted); text-align: center; padding: 1rem;">تم البحث ولم يتم العثور على أسئلة إضافية مطابقة لنقطة الضعف.</div>`;
+                    return;
+                }
+
+                practiceContainer.innerHTML = `
+                    <h3 style="font-size: 1.1rem; color: var(--accent-cyan); margin-bottom: 1rem;">💡 أسئلة تدريبية مقترحة لتقوية مفهوم: "${conceptQuery}"</h3>
+                    ${data.recommendations.map((rec, idx) => `
+                        <div class="question-card" style="border-color: var(--border-active);">
+                            <div style="display: flex; justify-content: space-between;">
+                                <span style="font-weight: 700; font-size: 1rem;">#${idx + 1} ${rec.question_text}</span>
+                                <span class="status-badge status-accepted">تطابق دلالي: ${(rec.similarity_score * 100).toFixed(0)}%</span>
+                            </div>
+                            <div style="font-size: 0.8rem; color: var(--text-dim);">مستوى الصعوبة: <b>${rec.difficulty || 'متوسط'}</b></div>
+                        </div>
+                    `).join('')}
+                `;
+            } catch (err) {
+                practiceContainer.innerHTML = `<div style="color: var(--accent-rose);">❌ خطأ: ${err.message}</div>`;
+            }
+        }
+
+        // ── Recommendation Vector Search Handler ──
+        async function handleRecommend() {
+            const query = document.getElementById('rec-query').value.trim();
+            const top_k = parseInt(document.getElementById('rec-top-k').value) || 5;
+            const container = document.getElementById('recommend-results-container');
+
+            if (!query) {
+                alert("يرجى إدخال استعلام بحث");
+                return;
+            }
+
+            container.innerHTML = `<div style="text-align: center; padding: 2rem;"><div class="spinner" style="margin:0 auto 1rem;"></div>جاري البحث في ChromaDB...</div>`;
+
+            try {
+                const response = await fetch('/api/v1/recommendations/questions', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query, top_k })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || data.detail || 'فشل البحث');
+                }
+
+                if (!data.recommendations || data.recommendations.length === 0) {
+                    container.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 2rem;">لم يتم العثور على أسئلة مطابقة. تأكد من توليد أسئلة أولاً لحفظها في ChromaDB.</div>`;
+                    return;
+                }
+
+                container.innerHTML = data.recommendations.map(rec => `
+                    <div class="question-card">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div style="font-weight: 700; font-size: 1rem;">${rec.question_text || 'نص السؤال'}</div>
+                            <span class="status-badge status-accepted">تشابه: ${(rec.similarity_score * 100).toFixed(1)}%</span>
+                        </div>
+                        <div class="eval-score-bar-wrap">
+                            <span>درجة التطابق الدلالي:</span>
+                            <div class="eval-score-bar">
+                                <div class="eval-score-fill" style="width: ${rec.similarity_score * 100}%;"></div>
+                            </div>
+                        </div>
+                        <div style="font-size: 0.8rem; color: var(--text-dim); display: flex; gap: 16px;">
+                            <span>مستوى الصعوبة: <b>${rec.difficulty || 'غير محدد'}</b></span>
+                            <span>معرف السؤال: <code>${rec.question_id}</code></span>
+                        </div>
+                    </div>
+                `).join('');
+
+            } catch (err) {
+                container.innerHTML = `<div style="color: var(--accent-rose); padding: 1rem;">❌ خطأ في البحث: ${err.message}</div>`;
+            }
+        }
+
+        // ── Dataset Loader & JSON Exporter ──
+        let cachedDataset = [];
+        async function loadDataset() {
+            const container = document.getElementById('dataset-container');
+            container.innerHTML = `<div style="text-align: center; padding: 2rem;"><div class="spinner" style="margin:0 auto 1rem;"></div>جاري جلب بنك الأسئلة...</div>`;
+
+            try {
+                const response = await fetch('/api/v1/dataset/export');
+                cachedDataset = await response.json();
+
+                if (!cachedDataset || cachedDataset.length === 0) {
+                    container.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 2rem;">لا توجد أسئلة معتمدة حالياً في قاعدة البيانات. قم بتشغيل التوليد أولاً.</div>`;
+                    return;
+                }
+
+                container.innerHTML = `
+                    <div style="margin-bottom: 1rem; color: var(--accent-cyan); font-size: 0.9rem;">
+                        📊 إجمالي الأسئلة المعتمدة المحفوظة في قاعدة البيانات: <b>${cachedDataset.length} سؤال</b>
+                    </div>
+                ` + cachedDataset.map((q, idx) => `
+                    <div class="question-card">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <span style="color: var(--text-dim); font-size: 0.8rem; margin-left: 8px;">#${idx + 1}</span>
+                                <span style="font-weight: 700; font-size: 1.05rem;">${q.question_text}</span>
+                            </div>
+                            <span class="status-badge status-${q.validation_status}">${q.validation_status}</span>
+                        </div>
+
+                        ${q.choices && q.choices.length ? `
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 8px 0;">
+                                ${q.choices.map(c => `
+                                    <div class="mcq-option ${c === q.correct_answer ? 'correct' : ''}">
+                                        <span>${c === q.correct_answer ? '✓' : '•'}</span> ${c}
+                                    </div>
+                                `).join('')}
+                            </div>
+                        ` : `
+                            <div class="mcq-option correct" style="margin: 8px 0;">
+                                <span>الإجابة الصحيحة:</span> ${q.correct_answer}
+                            </div>
+                        `}
+
+                        <div style="background: rgba(255,255,255,0.02); padding: 8px 12px; border-radius: var(--radius-sm); font-size: 0.85rem; color: var(--text-muted);">
+                            💡 <b>الشرح والتفسير:</b> ${q.explanation}
+                        </div>
+
+                        <div style="font-size: 0.8rem; color: var(--text-dim); display: flex; justify-content: space-between; border-top: 1px solid var(--border-color); padding-top: 8px;">
+                            <span>النوع: <b>${q.question_type}</b> | الصعوبة: <b>${q.difficulty}</b></span>
+                            <span>درجة التقييم الكلية: <b>${q.overall_evaluation_score ? (q.overall_evaluation_score * 100).toFixed(0) + '%' : 'N/A'}</b></span>
+                        </div>
+                    </div>
+                `).join('');
+
+            } catch (err) {
+                container.innerHTML = `<div style="color: var(--accent-rose); padding: 1rem;">❌ خطأ: ${err.message}</div>`;
+            }
+        }
+
+        function downloadDatasetJson() {
+            if (!cachedDataset.length) {
+                alert("يرجى تحديث القائمة أولاً لجلب البيانات");
+                return;
+            }
+            const blob = new Blob([JSON.stringify(cachedDataset, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `smart_educator_dataset_${Date.now()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // ── Training Pairs Builder ──
+        async function handleBuildPairs() {
+            const container = document.getElementById('pairs-results-container');
+            container.innerHTML = `<div style="text-align: center; padding: 2rem;"><div class="spinner" style="margin:0 auto 1rem;"></div>جاري بناء أزواج التدريب وحساب تشابه جاكارد...</div>`;
+
+            try {
+                const response = await fetch('/api/v1/training-pairs/build', { method: 'POST' });
+                const data = await response.json();
+
+                container.innerHTML = `
+                    <div style="background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.25); border-radius: var(--radius-md); padding: 1.5rem;">
+                        <h3 style="color: var(--primary); font-size: 1.1rem; margin-bottom: 12px;">🎉 تم إنشاء وتصدير أزواج التدريب بنجاح!</h3>
+                        <div class="grid-3" style="margin-bottom: 1rem;">
+                            <div class="card" style="padding: 1rem; text-align: center;">
+                                <div style="font-size: 1.5rem; font-weight: 800; color: var(--accent-emerald);">${data.positive_pairs}</div>
+                                <div style="font-size: 0.8rem; color: var(--text-muted);">أزواج إيجابية (Positive)</div>
+                            </div>
+                            <div class="card" style="padding: 1rem; text-align: center;">
+                                <div style="font-size: 1.5rem; font-weight: 800; color: var(--text-dim);">${data.negative_pairs}</div>
+                                <div style="font-size: 0.8rem; color: var(--text-muted);">أزواج سلبية (Negative)</div>
+                            </div>
+                            <div class="card" style="padding: 1rem; text-align: center;">
+                                <div style="font-size: 1.5rem; font-weight: 800; color: var(--accent-amber);">${data.hard_negative_pairs}</div>
+                                <div style="font-size: 0.8rem; color: var(--text-muted);">سلبية صعبة (Hard Negatives)</div>
+                            </div>
+                        </div>
+                        <div style="font-size: 0.85rem; color: var(--text-muted);">
+                            📁 مسار التصدير: <code>${data.export_path || 'assets/training_pairs.jsonl'}</code>
+                        </div>
+                    </div>
+                `;
+            } catch (err) {
+                container.innerHTML = `<div style="color: var(--accent-rose); padding: 1rem;">❌ خطأ في بناء الأزواج: ${err.message}</div>`;
+            }
+        }
+
+        // ── System Health Checker ──
+        async function checkSystemHealth() {
+            const container = document.getElementById('health-results-container');
+            const headerStatus = document.getElementById('header-status');
+            container.innerHTML = `<div style="text-align: center; padding: 2rem;"><div class="spinner" style="margin:0 auto 1rem;"></div>جاري فحص جميع الخدمات...</div>`;
+
+            try {
+                const response = await fetch('/api/v1/health/ready');
+                const data = await response.json();
+
+                const isHealthy = data.status === 'ready';
+                headerStatus.innerHTML = `
+                    <div class="status-dot" style="background: ${isHealthy ? 'var(--accent-emerald)' : 'var(--accent-rose)'};"></div>
+                    <span>${isHealthy ? 'النظام جاهز' : 'الخدمة متأثرة'}</span>
+                `;
+
+                container.innerHTML = `
+                    <div class="grid-3" style="margin-bottom: 1.5rem;">
+                        <div class="card" style="padding: 1.25rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                <span style="font-weight: 700;">🐘 PostgreSQL</span>
+                                <span class="status-badge ${data.dependencies?.database?.status === 'healthy' ? 'status-accepted' : 'status-rejected'}">
+                                    ${data.dependencies?.database?.status || 'Unknown'}
+                                </span>
+                            </div>
+                            <p style="font-size: 0.8rem; color: var(--text-muted);">قاعدة البيانات العلائقية والمخططات (Alembic)</p>
+                        </div>
+
+                        <div class="card" style="padding: 1.25rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                <span style="font-weight: 700;">⚡ Redis Cache</span>
+                                <span class="status-badge ${data.dependencies?.redis?.status === 'healthy' ? 'status-accepted' : 'status-rejected'}">
+                                    ${data.dependencies?.redis?.status || 'Unknown'}
+                                </span>
+                            </div>
+                            <p style="font-size: 0.8rem; color: var(--text-muted);">التخزين المؤقت لنتائج التوليد والمتجهات</p>
+                        </div>
+
+                        <div class="card" style="padding: 1.25rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                <span style="font-weight: 700;">🔮 ChromaDB</span>
+                                <span class="status-badge ${data.dependencies?.chromadb?.status === 'healthy' ? 'status-accepted' : 'status-rejected'}">
+                                    ${data.dependencies?.chromadb?.status || 'Unknown'}
+                                </span>
+                            </div>
+                            <p style="font-size: 0.8rem; color: var(--text-muted);">قاعدة بيانات المتجهات للبحث الدلالي</p>
+                        </div>
+                    </div>
+
+                    <div style="background: rgba(0,0,0,0.2); padding: 12px 16px; border-radius: var(--radius-sm); font-size: 0.85rem; display: flex; justify-content: space-between;">
+                        <span>⏱️ زمن الاستجابة الكلي للفحص: <b>${data.response_time_ms} ms</b></span>
+                        <span>الحالة الإجمالية: <b style="color: ${isHealthy ? 'var(--accent-emerald)' : 'var(--accent-rose)'};">${data.status.toUpperCase()}</b></span>
+                    </div>
+                `;
+
+            } catch (err) {
+                container.innerHTML = `<div style="color: var(--accent-rose); padding: 1rem;">❌ تعذر إجراء الفحص: ${err.message}</div>`;
+            }
+        }
+
+        // Run initial health check on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            checkSystemHealth();
+        });
+    </script>
+</body>
+</html>

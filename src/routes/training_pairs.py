@@ -3,9 +3,9 @@ import os
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from controllers.CRUD_Operations.learning_outcomes import get_all_outcomes
-from controllers.CRUD_Operations.question_lo_links import get_links_by_question
-from controllers.CRUD_Operations.questions import get_accepted_questions
+from crud.learning_outcomes import get_all_outcomes
+from crud.question_lo_links import get_links_by_question
+from crud.questions import get_accepted_questions
 from helpers.db import get_db
 from services.pair_generator import QuestionWithLO, export_pairs_jsonl, generate_pairs
 

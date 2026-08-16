@@ -9,10 +9,10 @@ from pydantic import BaseModel
 from sqlalchemy.exc import MultipleResultsFound
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from controllers.CRUD_Operations.evaluation_results import get_evaluation_by_question, save_evaluations
-from controllers.CRUD_Operations.learning_outcomes import get_all_outcomes
-from controllers.CRUD_Operations.question_lo_links import get_links_by_question
-from controllers.CRUD_Operations.questions import get_accepted_questions, get_all_questions, get_question_by_id, get_questions_by_ids
+from crud.evaluation_results import get_evaluation_by_question, save_evaluations
+from crud.learning_outcomes import get_all_outcomes
+from crud.question_lo_links import get_links_by_question
+from crud.questions import get_accepted_questions, get_all_questions, get_question_by_id, get_questions_by_ids
 from graph.graph import run_pipeline
 from helpers.db import get_db
 from helpers.hashing import compute_context_hash

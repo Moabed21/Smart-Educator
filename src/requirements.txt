@@ -1,42 +1,34 @@
-# ── API Layer ──────────────────────────────────────────────
+# ── Smart-Educator Streamlined Production Dependencies ──
+
+# ── Web API Layer ──
 fastapi
 uvicorn[standard]
 python-multipart
 aiofiles
 
-# ── Config & Validation ────────────────────────────────────
+# ── Config & Schema Validation ──
 pydantic
 pydantic-settings
 python-dotenv
 
-# ── LangChain / Document Processing ───────────────────────
-langchain
-langchain-community
-langchain-text-splitters
+# ── Document Parsing & Math ──
 PyMuPDF
+numpy
 
-# ── LangGraph (AI Pipeline Orchestration) ─────────────────
+# ── AI Pipeline & LLM Orchestration ──
 langgraph
-
-# ── Gemini API ─────────────────────────────────────────────
 google-genai
-langchain-google-genai
 
-# ── Database (PostgreSQL + ORM + Migrations) ───────────────
+# ── Relational Database (PostgreSQL + Asyncpg + Alembic) ──
 sqlalchemy[asyncio]
 asyncpg
 alembic
 
-# ── Vector Database ────────────────────────────────────────
+# ── Vector Search & Caching ──
 chromadb
-
-# ── Cache ──────────────────────────────────────────────────
 redis[asyncio]
 
-# ── Embeddings & Fine-Tuning ───────────────────────────────
-sentence-transformers
-
-# ── Testing ────────────────────────────────────────────────
+# ── Automated Testing ──
 pytest
 pytest-asyncio
 httpx

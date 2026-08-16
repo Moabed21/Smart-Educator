@@ -1,87 +1,75 @@
-from fastapi import APIRouter, Depends, UploadFile, status, HTTPException
-from controllers import DataController, ProjectController, ProcessController
-from helpers.config import get_settings, Settings
-from fastapi.responses import JSONResponse
-from models.enums import ResponseSignal
-from .schemes.data import ProcessRequest
-import aiofiles
 import logging
 import os
+from fastapi import APIRouter, UploadFile, status, HTTPException
+from fastapi.responses import JSONResponse
+from models.enums import ResponseSignal
+from routes.schemes.data import ProcessRequest
+from services import file_service
 
-logger = logging.getLogger('server.error')
+logger = logging.getLogger("server.error")
 
 data_router = APIRouter(
-	prefix="/api/v1/data",
-	tags= ["/api/v1/","data"]
+    prefix="/api/v1/data",
+    tags=["data"]
 )
 
 @data_router.post("/upload/{project_id}")
-async def upload_data(project_id : str,file: UploadFile,
-	app_settings : Settings = Depends(get_settings)):
-	# paremeters are: input file, path parameter, env vars
+async def upload_data(project_id: str, file: UploadFile):
+    """Validate and upload an educational document to project storage."""
+    is_valid, message = file_service.validate_file(file)
+    if not is_valid:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=message,
+        )
 
-	# because the validation is logic work we seperate it
-	# in controllers then call it here
-	is_valid, result = DataController().validate_uploaded_file(file=file)
+    try:
+        _, file_id = await file_service.save_upload(file, project_id)
+        return JSONResponse(
+            content={
+                "signal": ResponseSignal.FILE_SUCCESSFULLY_VALIDATED.value,
+                "file_id": file_id,
+            },
+            status_code=status.HTTP_200_OK,
+        )
+    except Exception as exc:
+        logger.error("Error while uploading file: %s", exc, exc_info=True)
+        return JSONResponse(
+            content={"signal": ResponseSignal.FILE_UPLOAD_FAILED.value},
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
 
-	if not is_valid:
-		raise HTTPException(
-			status_code=status.HTTP_400_BAD_REQUEST,
-			detail=result
-		)
-	
-	#file_id to the models to know that this file has an id
-	file_path, file_id = DataController().generate_unique_filename(
-		ori_filename = file.filename,
-		project_id   = project_id
-	)
-	# now we got the path of the file itself
-
-	# ---------------file storing operation---------------------------------
-	try:
-		async with aiofiles.open(file_path,"wb") as f:
-			# wb means open any file in writemode as binary 
-			while chunk := await file.read(app_settings.FILE_DEFAULT_CHUNK_SIZE):
-				await f.write(chunk)
-	# ----------------------------------------------------------------------
-	except Exception as e:
-		logger.error(f"error while uploading the file {e}")
-		return JSONResponse(
-		content={"signal": ResponseSignal.FILE_UPLOAD_FAILED.value},
-		status_code=status.HTTP_200_OK
-	)
-	return JSONResponse(
-		content = {
-			"signal": ResponseSignal.FILE_SUCCESSFULLY_VALIDATED.value,
-			"file_id":file_id
-			},
-		status_code=status.HTTP_200_OK
-	)
 
 @data_router.post("/process/{project_id}")
-async def process_endpoint(project_id :str, process_request: ProcessRequest):
+async def process_endpoint(project_id: str, process_request: ProcessRequest):
+    """Extract and split document content into contextual chunks."""
+    project_dir = file_service.get_project_directory(project_id)
+    file_path = os.path.join(project_dir, process_request.file_id)
 
-	file_id = process_request.file_id
-	chunk_size = process_request.chunk_size
-	overlap_size = process_request.overlap_size
+    if not os.path.exists(file_path):
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"File {process_request.file_id} not found in project {project_id}",
+        )
 
-	process_controller= ProcessController(project_id=project_id)
+    try:
+        raw_text = file_service.extract_text_from_file(file_path)
+        chunks = file_service.chunk_text(
+            raw_text,
+            chunk_size=process_request.chunk_size,
+            overlap_size=process_request.overlap_size,
+        )
 
-	file_content = await process_controller.get_file_content(file_id=file_id)
+        if not chunks:
+            return JSONResponse(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                content={"signal": ResponseSignal.PROCESSING_FAILED.value},
+            )
 
-	file_chunks = process_controller.process_file_content(
-		file_content=file_content,
-		file_id=file_id,
-		chunk_size=chunk_size,
-		overlap_size=overlap_size
-	)
-
-	if file_chunks is None or len(file_chunks) == 0:
-		return JSONResponse(
-			status_code=status.HTTP_400_BAD_REQUEST,
-			content={
-				"signal":ResponseSignal.PROCESSING_FAILED.value
-			}
-		)
-	
-	return file_chunks
+        return chunks
+    except Exception as exc:
+        logger.error("Error while processing file %s: %s", process_request.file_id, exc, exc_info=True)
+        return JSONResponse(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            content={"signal": ResponseSignal.PROCESSING_FAILED.value},
+        )

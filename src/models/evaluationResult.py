@@ -8,7 +8,7 @@ class EvaluationResult(Base):
     id          = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
 
     # which question this evaluation belongs to
-    question_id = Column(UUID(as_uuid=True), ForeignKey("questions.id"), nullable=False)
+    question_id = Column(UUID(as_uuid=True), ForeignKey("questions.id", ondelete="CASCADE"), nullable=False, index=True)
 
     # the 8 PRD §8.5 criteria scores (0.0 – 1.0 each)
     context_grounding_score          = Column(Float, nullable=False)
@@ -24,4 +24,4 @@ class EvaluationResult(Base):
     overall_score = Column(Float, nullable=False)
 
     # accepted | rejected | needs_review
-    status        = Column(String, nullable=False)
+    status        = Column(String, nullable=False, index=True)

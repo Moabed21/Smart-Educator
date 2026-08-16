@@ -3,40 +3,21 @@
 Gemini already claims a `related_LO_ids` list per question (see
 question_generator.py). This module verifies those claims against the real
 extracted LO list, scores each surviving link with embedding-based semantic
-similarity, and attaches a human-readable Arabic reason — before any DB save
-happens. It does NOT touch the database and does NOT build the ORM
-`QuestionLOLink` rows (those need real question/LO UUIDs, which only exist
-after `save_questions`/`save_outcomes` run).
+similarity (via Gemini Embeddings API), and attaches a human-readable Arabic
+reason — before any DB save happens. It does NOT touch the database and does
+not build the ORM `QuestionLOLink` rows (those need real question/LO UUIDs,
+which only exist after `save_questions`/`save_outcomes` run).
 """
-import asyncio
 import logging
 from dataclasses import dataclass
-
-from sentence_transformers import SentenceTransformer
+import numpy as np
 
 from routes.schemes.learningOutcome import LearningOutcome
 from routes.schemes.questionL0Link import QuestionL0Link
 from routes.schemes.questions import Question
+from services.embedding_service import embed_batch
 
 logger = logging.getLogger("server.lo_linker")
-
-_EMBEDDING_MODEL_NAME = "paraphrase-multilingual-mpnet-base-v2"
-
-_model: SentenceTransformer | None = None
-
-
-def _get_model() -> SentenceTransformer:
-    """Lazily load the sentence-transformers model once per process.
-
-    First call downloads the model weights (~1GB) if not already cached
-    locally — expect it to be noticeably slower than subsequent calls.
-    """
-    global _model
-    if _model is None:
-        logger.info("Loading sentence-transformers model %r ...", _EMBEDDING_MODEL_NAME)
-        _model = SentenceTransformer(_EMBEDDING_MODEL_NAME)
-        logger.info("Model %r loaded.", _EMBEDDING_MODEL_NAME)
-    return _model
 
 
 @dataclass
@@ -44,9 +25,8 @@ class ResolvedLink:
     """A `QuestionL0Link` paired with the actual question/LO it connects.
 
     `QuestionL0Link` itself only carries `confidence` + `reason` — it has no
-    `question_id`/`lo_id` fields (a known schema gap, not fixed here; see
-    module docstring). This dataclass carries the full objects alongside the
-    link so the caller can resolve real DB ids once both are saved.
+    `question_id`/`lo_id` fields. This dataclass carries the full objects
+    alongside the link so the caller can resolve real DB ids once both are saved.
     """
 
     question: Question
@@ -63,31 +43,36 @@ def _build_reason(concept: str, confidence: float) -> str:
     )
 
 
+def _cosine_similarity(vec_a: list[float] | np.ndarray, vec_b: list[float] | np.ndarray) -> float:
+    """Compute cosine similarity between two 1D vectors."""
+    a = np.array(vec_a, dtype=np.float32)
+    b = np.array(vec_b, dtype=np.float32)
+    norm_a = np.linalg.norm(a)
+    norm_b = np.linalg.norm(b)
+    if norm_a == 0.0 or norm_b == 0.0:
+        return 0.0
+    return float(np.dot(a, b) / (norm_a * norm_b))
+
+
 async def link_questions_to_outcomes(
     questions: list[Question], learning_outcomes: list[LearningOutcome]
 ) -> list[ResolvedLink]:
     """Resolve each question's claimed `related_LO_ids` into scored links.
 
     For every (question, claimed LO id) pair: looks up the real
-    `LearningOutcome` by id, skips (with a warning, no exception) any id
-    Gemini invented that isn't in `learning_outcomes`, then scores the
-    surviving pairs with cosine similarity between `question.question_text`
-    and `learning_outcome.text` embeddings (`paraphrase-multilingual-mpnet-base-v2`,
-    since the passage/questions are Arabic). All pairs are embedded in two
-    batched `encode()` calls rather than one call per pair, and the
-    (CPU-bound) model loading/encoding is run in a worker thread via
-    `asyncio.to_thread` so it doesn't block the event loop.
+    `LearningOutcome` by id, skips any invalid id, and computes cosine similarity
+    between question and LO embeddings using the high-dimensional Gemini
+    embeddings API.
 
     Args:
         questions: Questions from `question_generator.generate_questions`,
-            each with Gemini's own claimed `related_LO_ids`.
+            each with claimed `related_LO_ids`.
         learning_outcomes: The real LOs from
-            `lo_extraction.extract_learning_outcomes` for the same context —
-            the source of truth `related_LO_ids` is checked against.
+            `lo_extraction.extract_learning_outcomes` for the same context.
 
     Returns:
         One `ResolvedLink` per (question, LO id) pair that resolved to a
-        real LO — invented/unknown ids are dropped, not raised as errors.
+        real LO.
     """
     lo_by_id = {lo.id: lo for lo in learning_outcomes}
 
@@ -108,19 +93,21 @@ async def link_questions_to_outcomes(
         logger.warning("No valid question-to-LO links resolved out of %d questions.", len(questions))
         return []
 
-    def _encode_and_score() -> list[float]:
-        model = _get_model()
-        question_texts = [q.question_text for q, _ in pairs]
-        lo_texts = [lo.text for _, lo in pairs]
-        # normalize_embeddings=True makes the dot product equal cosine similarity
-        question_embeddings = model.encode(question_texts, normalize_embeddings=True)
-        lo_embeddings = model.encode(lo_texts, normalize_embeddings=True)
-        return [float((q_emb * lo_emb).sum()) for q_emb, lo_emb in zip(question_embeddings, lo_embeddings)]
+    # Extract all distinct texts to embed in a single batch
+    question_texts = [q.question_text for q, _ in pairs]
+    lo_texts = [lo.text for _, lo in pairs]
 
-    raw_scores = await asyncio.to_thread(_encode_and_score)
+    # Combine into single embedding request for efficiency
+    all_texts = question_texts + lo_texts
+    all_embeddings = await embed_batch(all_texts)
+
+    num_pairs = len(pairs)
+    q_embeddings = all_embeddings[:num_pairs]
+    lo_embeddings = all_embeddings[num_pairs:]
 
     links: list[ResolvedLink] = []
-    for (question, lo), raw_score in zip(pairs, raw_scores):
+    for (question, lo), q_emb, lo_emb in zip(pairs, q_embeddings, lo_embeddings):
+        raw_score = _cosine_similarity(q_emb, lo_emb)
         confidence = max(0.0, min(1.0, raw_score))
         reason = _build_reason(lo.concept, confidence)
         links.append(

@@ -4,11 +4,11 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from controllers.CRUD_Operations.question_lo_links import get_links_by_question
-from controllers.CRUD_Operations.questions import get_question_by_id
+from crud.question_lo_links import get_links_by_question
+from crud.questions import get_question_by_id
 from helpers.db import get_db
 from services.embedding_service import embed_text
-from stores.vector.vector_store import VectorStoreService
+from services.vector_store import VectorStoreService
 from routes.schemes.recommended_questions import RecommendationRequest
 
 rec_questions_router = APIRouter(
