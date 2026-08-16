@@ -1,6 +1,27 @@
-src/.env
+# Environment variables & secrets
 .env
+src/.env
+*.env
+
+# Python bytecode & cache
 __pycache__/
-files/
-pyrightconfig.json
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Virtual environments
+.venv/
 venv/
+ENV/
+env/
+
+# Uploaded assets and local data
+assets/files/*
+!assets/files/.gitkeep
+files/
+
+# IDE & OS files
+.DS_Store
+pyrightconfig.json
+.vscode/
+.idea/
