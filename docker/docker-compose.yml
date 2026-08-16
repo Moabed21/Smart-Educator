@@ -1,4 +1,38 @@
+# ── Smart-Educator Microservices Stack (Docker Compose) ──
+# Services:
+#   1. api: FastAPI application managed by Gunicorn with Uvicorn workers
+#   2. postgres: PostgreSQL 16 relational database with health check
+#   3. redis: Redis 7 in-memory cache & idempotency store
+#   4. chromadb: ChromaDB vector database for semantic search
+
 services:
+  # ── Smart-Educator Application Backend ──
+  api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: smart_educator_api
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    env_file:
+      - ../.env
+    environment:
+      # Use internal Docker service DNS names
+      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@postgres:5432/smart_educator
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - CHROMA_HOST=chromadb
+      - CHROMA_PORT=8000
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - smart_educator_network
+
+  # ── PostgreSQL Relational Database ──
   postgres:
     image: postgres:16
     container_name: smart_educator_postgres
@@ -16,7 +50,10 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    networks:
+      - smart_educator_network
 
+  # ── Redis In-Memory Cache & Key-Value Store ──
   redis:
     image: redis:7
     container_name: smart_educator_redis
@@ -30,17 +67,28 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    networks:
+      - smart_educator_network
 
+  # ── ChromaDB Vector Database ──
   chromadb:
-    image: chromadb/chroma
+    image: chromadb/chroma:latest
     container_name: smart_educator_chromadb
     restart: unless-stopped
     ports:
-      - "8000:8000"
+      - "8001:8000"
     volumes:
       - chroma_data:/chroma/chroma
+    networks:
+      - smart_educator_network
 
+# ── Persistent Storage Volumes ──
 volumes:
   postgres_data:
   redis_data:
   chroma_data:
+
+# ── Isolated Internal Bridge Network ──
+networks:
+  smart_educator_network:
+    driver: bridge
