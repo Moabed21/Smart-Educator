@@ -35,8 +35,27 @@ dataset_router= APIRouter(
 
 @dataset_router.post("/generate")
 async def generate(payload: EducationalContext, db: AsyncSession = Depends(get_db)):
-    """Run the AI pipeline for one educational context."""
-
+    """
+    Run the AI assessment generation & evaluation pipeline for an educational context.
+    
+    EXPLANATION OF THE COMPLETE PIPELINE FLOW:
+    1. Context Fingerprinting & Redis Caching:
+       - Computes a deterministic SHA-256 hash of (subject + grade_level + passage + question_config).
+       - Checks Redis for `dataset_generate:<hash>`.
+       - If CACHE HIT: Returns the pre-computed JSON result in ~2ms with $0 Gemini cost.
+    2. LangGraph Execution (On Cache Miss):
+       - Triggers `run_pipeline(payload, db)`:
+         Node 1: parse_node (Validates and packages context)
+         Node 2: extract_outcomes_node (Gemini extracts verifiable LOs with quotes)
+         Node 3: generate_questions_node (Gemini generates MCQs, T/F, Short Answer)
+         Node 4: link_outcomes_node (Computes 3072d Gemini vector cosine similarity)
+         Node 5: evaluate_node (8-criteria LLM-as-Judge scores each question)
+         Conditional Edge: If questions pass criteria -> store_node persists to PostgreSQL & ChromaDB.
+                           If all rejected -> log_and_discard_node skips DB persistence.
+    3. Caching & Response:
+       - Stores the final summary in Redis with a 24-hour TTL (settings.REDIS_TTL).
+       - Returns generation metrics (counts of LOs, questions, links, and status breakdown).
+    """
     # Checks Redis cache first using context hash. If cached, returns the cached result.
     # Otherwise runs pipeline and caches the result.
     settings = get_settings()
@@ -73,6 +92,7 @@ async def generate(payload: EducationalContext, db: AsyncSession = Depends(get_d
         logger.warning("Redis cache write failed: %s", exc)
 
     return result
+
 
 class EvaluateRequest(BaseModel):
     """Optional body for POST /dataset/evaluate.
@@ -265,10 +285,17 @@ async def export(
     difficulty: Optional[str] = None,
     db: AsyncSession = Depends(get_db),
 ):
-    """Export clean dataset containing accepted and needs_review records.
-
-    Filters questions by difficulty if provided. Includes learning outcome texts,
-    evaluation score, and validation status.
+    """
+    Export clean assessment dataset containing accepted and needs_review records.
+    
+    EXPLANATION:
+    - Filters questions by difficulty if query param is provided (e.g. ?difficulty=medium).
+    - Excludes all rejected items (only fetches questions verified by the LLM judge).
+    - Denormalizes/Flattens Relations:
+      1. Fetches accepted questions from PostgreSQL.
+      2. In-memory joins with Learning Outcomes using linked LO foreign keys.
+      3. Attaches overall evaluation scores and validation statuses.
+    - Output: An array of standardized JSON records ready for LMS export, testing, or fine-tuning.
     """
     accepted_questions = await get_accepted_questions(db)
     if difficulty:
@@ -302,5 +329,6 @@ async def export(
             "validation_status": eval_res.status if eval_res else "needs_review",
         }
         records.append(record)
+
 
     return records

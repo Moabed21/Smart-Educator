@@ -1,3 +1,12 @@
+"""Smart-Educator FastAPI Application Entrypoint.
+
+Orchestrates the entire backend service:
+- Initializes application lifespan (startup and graceful shutdown hooks)
+- Injects correlation tracing middleware (X-Request-ID) and CORS policies
+- Standardizes global error contracts (HTTPException, 422 Validation, 500 Server errors)
+- Serves the interactive Web Studio GUI or JSON service metadata via content negotiation
+- Registers modular routers across all business domains
+"""
 import logging
 import os
 from contextlib import asynccontextmanager
@@ -20,15 +29,22 @@ logger = logging.getLogger("server.error")
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """
-    Application lifespan manager:
-    - Runs setup logic on application startup (Alembic manages migrations in production).
-    - Ensures clean resource teardown upon SIGTERM / graceful container shutdown.
+    Modern FastAPI Lifespan Context Manager.
+    
+    EXPLANATION:
+    - Replaces deprecated `@app.on_event("startup")` and `"shutdown"`.
+    - Code before `yield` executes once when the server starts up.
+      (Database schema migrations are managed via Alembic in production).
+    - Code after `yield` executes upon SIGTERM / SIGINT graceful container shutdown,
+      allowing in-flight requests and database connections to terminate cleanly.
     """
     logger.info("🚀 Starting %s v%s in %s environment...", settings.APP_NAME, settings.APP_VERSION, settings.ENVIRONMENT)
     yield
     logger.info("🛑 Gracefully shutting down %s...", settings.APP_NAME)
 
 
+# ── Create FastAPI Application Instance ──
+# docs_url="/docs" enables interactive Swagger UI; redoc_url="/redoc" enables ReDoc documentation
 app = FastAPI(
     title="Smart-Educator API",
     version=settings.APP_VERSION,
@@ -38,10 +54,12 @@ app = FastAPI(
     redoc_url="/redoc",
 )
 
-# ── Correlation & Contextual Middleware: Injects X-Request-ID across all requests ──
+# ── Correlation Middleware: Injects X-Request-ID across all requests ──
+# Allows developers and logging aggregators to trace a single request across multiple services
 app.add_middleware(RequestIdMiddleware)
 
 # ── CORS Middleware: Configured from environment settings for frontend integration ──
+# Controls which origins/domains can invoke the API from browser scripts
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.CORS_ORIGINS,
@@ -50,11 +68,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 # ── Standardized Global Error Contract Handlers ──
+# Enforces a uniform JSON structure across all API failures: {"success": False, "error": ..., "path": ...}
 
 @app.exception_handler(HTTPException)
 async def custom_http_exception_handler(request: Request, exc: HTTPException):
-    """Returns standardized JSON error contract for application-raised HTTPExceptions."""
+    """
+    Handles explicitly raised HTTPExceptions (e.g. 400 Bad Request, 404 Not Found).
+    Ensures client always receives a structured error payload rather than generic plain text.
+    """
     return JSONResponse(
         status_code=exc.status_code,
         content={
@@ -68,7 +91,11 @@ async def custom_http_exception_handler(request: Request, exc: HTTPException):
 
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
-    """Returns standardized JSON error contract for Pydantic input validation failures (HTTP 422)."""
+    """
+    Handles Pydantic input validation failures (HTTP 422 Unprocessable Entity).
+    Triggered when an incoming request fails schema type checks, regex patterns, or field validators.
+    Returns detailed field-level errors explaining which parameter failed validation.
+    """
     return JSONResponse(
         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
         content={
@@ -82,7 +109,10 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 
 @app.exception_handler(Exception)
 async def unhandled_exception_handler(request: Request, exc: Exception):
-    """Catch-all handler for unexpected server errors — logs trace with Request ID and prevents traceback leaks."""
+    """
+    Catch-all handler for unexpected server exceptions (HTTP 500 Internal Server Error).
+    Logs the full traceback with correlation Request ID while shielding client from sensitive internal traces.
+    """
     logger.error("Unhandled exception on %s: %s", request.url.path, exc, exc_info=True)
     return JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -101,8 +131,9 @@ async def unhandled_exception_handler(request: Request, exc: Exception):
 @app.get("/app", response_class=HTMLResponse, include_in_schema=False)
 async def serve_web_interface(request: Request):
     """
-    Serves the interactive Smart-Educator Web Studio Interface for browsers,
-    or returns JSON service metadata when queried by API clients.
+    Content Negotiation Endpoint:
+    - If accessed by a web browser: Serves the interactive Smart-Educator Web Studio GUI (static/index.html).
+    - If queried by an API client (Accept: application/json): Returns service metadata and doc links.
     """
     accept_header = request.headers.get("accept", "")
     
@@ -127,8 +158,10 @@ async def serve_web_interface(request: Request):
 
 
 # ── Register Decoupled API Routers ──
+# Mounts individual domain routers under standard URL prefixes (/api/v1/...)
 app.include_router(base.base_router)
 app.include_router(data.data_router)
 app.include_router(dataset.dataset_router)
 app.include_router(training_pairs.training_pairs_router)
 app.include_router(recommendations_questions.rec_questions_router)
+

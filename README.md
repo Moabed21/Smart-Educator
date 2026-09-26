@@ -187,11 +187,11 @@ Database schema is version-controlled via **Alembic migrations** with cascade de
 
 ## ⚡ 6. Caching & Vector DB Infrastructure
 
-### 🔴 Redis Caching Layer ([redis_client.py](file:///home/moabed/Documents/Smart-Educator/src/helpers/redis_client.py))
+### 🔴 Redis Caching Layer ([src/helpers/redis_client.py](src/helpers/redis_client.py))
 - **Pipeline Cache (`dataset_generate:<sha256_hash>`)**: Caches complete `/dataset/generate` output payloads for 24 hours (`REDIS_TTL=86400`).
 - **Embedding Cache (`embedding:<sha256_text_model>`)**: Caches Gemini vectors in Redis to eliminate redundant embedding API calls.
 
-### 🔷 ChromaDB Vector DB ([vector_store.py](file:///home/moabed/Documents/Smart-Educator/src/services/vector_store.py))
+### 🔷 ChromaDB Vector DB ([src/services/vector_store.py](src/services/vector_store.py))
 - Stores question text vectors in collection `"questions"` (mapped to port `8001` on host).
 - Lazy client initialization on first call prevents startup blocking.
 
@@ -217,7 +217,7 @@ To ensure high throughput, minimal memory usage, and instant startup times, the 
 ### 🛠️ Optimization Details by Component
 
 #### 1. High-Dimensional Vector Semantic Linking (Replaced Heavy PyTorch)
-* **Location:** [`src/services/lo_linker.py`](file:///home/moabed/Documents/Smart-Educator/src/services/lo_linker.py) & [`src/services/embedding_service.py`](file:///home/moabed/Documents/Smart-Educator/src/services/embedding_service.py)
+* **Location:** [`src/services/lo_linker.py`](src/services/lo_linker.py) & [`src/services/embedding_service.py`](src/services/embedding_service.py)
 * **Type of Update:** *Machine Learning / Vector Linking Optimization*
 * **What Changed:** Replaced local `SentenceTransformer("paraphrase-multilingual-mpnet-base-v2")` with Google's cloud-based **Gemini Embeddings API (3072 dims)** and a fast C-level **NumPy cosine similarity** function:
   ```python
@@ -229,25 +229,25 @@ To ensure high throughput, minimal memory usage, and instant startup times, the 
 * **Why:** Eliminates the **1.1 GB model weight download** and the **~1.8 GB PyTorch RAM overhead**, running linking calculations in microseconds.
 
 #### 2. Functional Document Service (Removed OOP Boilerplate)
-* **Location:** [`src/services/file_service.py`](file:///home/moabed/Documents/Smart-Educator/src/services/file_service.py) & [`src/routes/data.py`](file:///home/moabed/Documents/Smart-Educator/src/routes/data.py)
+* **Location:** [`src/services/file_service.py`](src/services/file_service.py) & [`src/routes/data.py`](src/routes/data.py)
 * **Type of Update:** *Code Architecture & File I/O Streamlining*
 * **What Changed:** Deleted 4 legacy OOP controller classes (`BaseController`, `ProjectController`, `DataController`, `ProcessController`) in favor of pure, testable functions and direct `pymupdf` (fitz) page extraction.
 * **Why:** Replaces deprecated LangChain wrapper overhead with direct asynchronous streaming (`aiofiles`) in 512KB non-blocking chunks.
 
 #### 3. Single-Stage Production Containerization
-* **Location:** [`Dockerfile`](file:///home/moabed/Documents/Smart-Educator/Dockerfile) & [`src/requirements.txt`](file:///home/moabed/Documents/Smart-Educator/src/requirements.txt)
+* **Location:** [`docker/Dockerfile`](docker/Dockerfile) & [`src/requirements.txt`](src/requirements.txt)
 * **Type of Update:** *DevOps & Container Infrastructure*
 * **What Changed:** Pruned `torch`, `transformers`, `sentence-transformers`, and heavy CUDA dependencies from `requirements.txt`. Simplified the `Dockerfile` into a clean single-stage Python 3.11-slim container.
 * **Why:** Shrinks Docker builds from **10 minutes down to ~15 seconds**, and cuts image size by **95%** (from 4.5 GB to 190 MB).
 
 #### 4. SHA-256 Context Fingerprinting & 2ms Redis Caching
-* **Location:** [`src/helpers/hashing.py`](file:///home/moabed/Documents/Smart-Educator/src/helpers/hashing.py) & [`src/routes/dataset.py`](file:///home/moabed/Documents/Smart-Educator/src/routes/dataset.py)
+* **Location:** [`src/helpers/hashing.py`](src/helpers/hashing.py) & [`src/routes/dataset.py`](src/routes/dataset.py)
 * **Type of Update:** *Caching & Cost Optimization*
 * **What Changed:** Generates deterministic SHA-256 hashes of `subject + grade_level + passage` and checks Redis before invoking the LangGraph pipeline or LLMs.
 * **Why:** Repeated requests for identical educational passages return in **2 milliseconds** with **$0 in Gemini API costs**.
 
 #### 5. Connection Pooling & Database Readiness Probes
-* **Location:** [`src/helpers/db.py`](file:///home/moabed/Documents/Smart-Educator/src/helpers/db.py), [`src/routes/base.py`](file:///home/moabed/Documents/Smart-Educator/src/routes/base.py), [`migrations/`](file:///home/moabed/Documents/Smart-Educator/migrations/)
+* **Location:** [`src/helpers/db.py`](src/helpers/db.py), [`src/routes/base.py`](src/routes/base.py), [`migrations/`](migrations/)
 * **Type of Update:** *Database Reliability & Concurrency*
 * **What Changed:** Configured async connection pooling (`pool_size=10`, `max_overflow=20`, `pool_pre_ping=True`, `pool_recycle=3600`), version-controlled Alembic migrations, and real-time dependency readiness checks.
 * **Why:** Prevents connection saturation under concurrent user traffic and eliminates dead database socket errors.
@@ -260,18 +260,24 @@ To ensure high throughput, minimal memory usage, and instant startup times, the 
 Smart-Educator/
 ├── assets/                    # Shared assets (sample texts, training pairs)
 ├── docker/                    # Container orchestration
+│   ├── Dockerfile             # Single-stage fast production Docker image
 │   └── docker-compose.yml     # Multi-service stack (API, Postgres, Redis, ChromaDB)
+├── info/                      # Documentation and blueprint specifications
+│   ├── .env.example           # Template environment configuration
+│   ├── PROJECT_BLUEPRINT.md   # Unified system master blueprint
+│   ├── diagrams.drawio        # Architectural system diagrams (source)
+│   └── diagrams.png           # Rendered architectural diagram
 ├── migrations/                # Alembic database migrations
 │   ├── env.py                 # Async migration runner
 │   └── versions/              # Migration versions (001_initial_schema.py)
-├── tests/                     # Automated testing suite (28 tests)
+├── tests/                     # Automated testing suite (29 tests)
 │   ├── conftest.py            # Test engine fixtures with NullPool
 │   ├── test_api_endpoints.py  # Route and probe tests
 │   ├── test_evaluator.py      # 8-criteria scoring tests
-│   ├── test_multi_context.py  # Chunking and context isolation tests
+│   ├── test_multi_context_pipeline.py # Chunking and context isolation tests
 │   ├── test_pair_generator.py # Jaccard similarity & triplet pair tests
 │   └── test_schemas.py        # Pydantic validation tests
-├── src/                       # Lean application source (7 clean modules)
+├── src/                       # Application source
 │   ├── crud/                  # Async SQLAlchemy CRUD operations
 │   │   ├── evaluation_results.py
 │   │   ├── learning_outcomes.py
@@ -281,14 +287,12 @@ Smart-Educator/
 │   │   └── graph.py
 │   ├── helpers/               # Core infrastructure utilities
 │   │   ├── config.py          # BaseSettings schema & env parsing
-│   │   ├── db.py              # Async connection pool & engine
+│   │   ├── db.py              # Async connection pool, engine & DeclarativeBase
 │   │   ├── hashing.py         # SHA-256 context hashing
 │   │   ├── logger.py          # Correlation ID (X-Request-ID) middleware
 │   │   ├── redis_client.py    # Async Redis cache client
-│   │   ├── security.py        # API key verification dependency
-│   │   └── storage.py         # Storage provider interface
+│   │   └── security.py        # API key verification dependency
 │   ├── models/                # SQLAlchemy ORM database models
-│   │   ├── base.py
 │   │   ├── enums.py
 │   │   ├── evaluationResult.py
 │   │   ├── learningOutcome.py
@@ -302,8 +306,7 @@ Smart-Educator/
 │   │   ├── training_pairs.py  # /api/v1/training-pairs/build
 │   │   └── schemes/           # Pydantic request/response schemas
 │   ├── services/              # Core business & AI logic
-│   │   ├── document_service.py# PDF & text file processing
-│   │   ├── embedding_service.py# Gemini Embeddings API + Redis vector cache
+│   │   ├── embedding_service.py # Gemini Embeddings API + Redis vector cache
 │   │   ├── evaluator.py       # LLM-as-Judge 8-criteria evaluator
 │   │   ├── file_service.py    # File storage, validation & chunking
 │   │   ├── fine_tune.py       # Offline embedding fine-tuning script
@@ -311,16 +314,14 @@ Smart-Educator/
 │   │   ├── lo_extraction.py   # Learning outcome extraction
 │   │   ├── lo_linker.py       # Gemini embedding cosine similarity linker
 │   │   ├── pair_generator.py  # Contrastive pair generator with Jaccard metrics
-│   │   ├── question_generator.py # Question generator
+│   │   ├── question_generator.py # Multi-format question generator
 │   │   └── vector_store.py    # ChromaDB vector store client
 │   ├── static/                # Web Studio User Interface
 │   │   └── index.html         # Interactive dashboard, generator & quiz studio
 │   ├── main.py                # Application entrypoint & middleware registration
 │   └── requirements.txt       # Streamlined production dependencies
-├── .env                       # Environment configuration
-├── Dockerfile                 # Single-stage fast production Docker image
+├── .env                       # Local environment configuration
 ├── alembic.ini                # Alembic migration configuration
-├── PROJECT_BLUEPRINT.md       # Master system blueprint
 └── README.md                  # Developer guide & architecture overview (this file)
 ```
 
@@ -329,10 +330,14 @@ Smart-Educator/
 ## 💻 9. Step-by-Step Setup & How-to-Run Guide
 
 ### Step 1: Environment Configuration
-Create or verify `.env` in the project root:
+Copy the template or create `.env` in the project root:
+```bash
+cp info/.env.example .env
+```
+Ensure your Gemini API key and credentials are set:
 ```env
 APP_NAME="smart-educator"
-APP_VERSION="0.1"
+APP_VERSION="0.1.0"
 GEMINI_API_KEY="your_actual_gemini_api_key"
 
 DATABASE_URL="postgresql+asyncpg://postgres:postgres@localhost:5432/smart_educator"
@@ -368,7 +373,7 @@ uvicorn main:app --app-dir src --reload --port 8000
 
 ## 🧪 10. Automated Testing & Health Probes
 
-Run the full automated test suite (28 tests covering schemas, 8-criteria evaluations, multi-context chunking, pair generation, and API endpoints):
+Run the full automated test suite (29 tests covering schemas, 8-criteria evaluations, multi-context chunking, pair generation, and API endpoints):
 
 ```bash
 source .venv/bin/activate

@@ -1,3 +1,8 @@
+"""FastAPI Router for Question Recommendations & Semantic Search.
+
+Finds top-K most pedagogically relevant questions matching a search query
+or student weakness concept using ChromaDB vector similarity search.
+"""
 import uuid
 from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -16,12 +21,30 @@ rec_questions_router = APIRouter(
     tags=["recommendations"]
 )
 
+
 @rec_questions_router.post("/questions")
 async def recommend_question(
     payload: RecommendationRequest,
     db: AsyncSession = Depends(get_db),
 ):
-    """Find top-K question recommendations for a search query using vector similarity"""
+    """
+    Find top-K question recommendations for a search query using vector similarity.
+    
+    EXPLANATION OF THE VECTOR SEARCH & RECOMMENDATION FLOW:
+    1. Validation: Ensures the search query is not blank.
+    2. Embedding Generation (Google Gemini):
+       - Converts natural language query (e.g. "Newton's second law acceleration")
+         into a 3072-dimensional vector embedding via services/embedding_service.py.
+    3. ChromaDB Nearest-Neighbor Query:
+       - Queries collection `"questions"` for the top-K nearest question vectors.
+       - Returns matched question IDs, vector distances, and embedded metadata.
+    4. Distance-to-Similarity Conversion:
+       - Transforms raw distance metric into an intuitive similarity score: 1.0 / (1.0 + distance).
+    5. Database Hydration & Difficulty Filtering:
+       - If metadata is incomplete in ChromaDB, queries PostgreSQL for full question text and LO links.
+       - Filters by difficulty if requested by the client.
+    6. Returns structured list of recommended questions ordered by relevance.
+    """
     if not payload.query.strip():
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -29,6 +52,7 @@ async def recommend_question(
         )
 
     try:
+        # Generate 3072-dim query embedding using Gemini Embeddings API (cached in Redis)
         query_embedding = await embed_text(payload.query)
         vector_store = VectorStoreService()
         search_result = vector_store.search(query_embedding=query_embedding, top_k=payload.top_k)
@@ -53,6 +77,7 @@ async def recommend_question(
         difficulty = meta.get("difficulty", payload.difficulty or "")
         lo_ids = meta.get("lo_ids", [])
 
+        # If ChromaDB metadata did not contain full text, hydrate from PostgreSQL
         if not question_text:
             try:
                 q_uuid = uuid.UUID(q_id_str)
@@ -65,6 +90,7 @@ async def recommend_question(
             except Exception:
                 pass
 
+        # Apply difficulty filter if client specified one
         if payload.difficulty and difficulty and difficulty != payload.difficulty:
             continue
 

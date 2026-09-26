@@ -1,3 +1,8 @@
+"""FastAPI Router for Contrastive Fine-Tuning Training Pair Generation.
+
+Constructs positive, negative, and hard-negative pairs from validated assessment
+questions and learning outcomes to train/fine-tune embedding models.
+"""
 import asyncio
 import os
 from fastapi import APIRouter, Depends
@@ -14,11 +19,25 @@ training_pairs_router = APIRouter(
     tags=["training-pairs"]
 )
 
+
 @training_pairs_router.post("/build")
 async def build_training_pairs(db: AsyncSession = Depends(get_db)):
-    """Build positive, negative, and hard-negative training pairs from saved DB questions per PRD §8.7 & §9.
-
+    """
+    Build positive, negative, and hard-negative training pairs from saved DB questions.
     Exports pairs to assets/training_pairs.jsonl and returns pair statistics.
+    
+    EXPLANATION OF CONTRASTIVE PAIR CONSTRUCTION:
+    1. Fetches only verified/accepted questions from PostgreSQL.
+    2. Builds associations between each question and its linked Learning Outcomes (QuestionWithLO).
+    3. Pair Generation Strategy (pair_generator.py):
+       - Positive Pair: Two questions targeting the identical Learning Outcome (same concept).
+       - Negative Pair: Two questions targeting completely different Learning Outcomes.
+       - Hard-Negative Pair: Questions that share high lexical/keyword similarity (measured by Jaccard similarity)
+         yet measure *different* Learning Outcomes. This forces embedding models to discern deep pedagogical
+         intent rather than relying on surface-level keyword overlap.
+    4. Serialization:
+       - Exports pairs in JSON Lines (JSONL) format under `assets/training_pairs.jsonl`,
+         directly compatible with standard sentence-transformers / contrastive fine-tuning pipelines.
     """
     accepted_questions = await get_accepted_questions(db)
     all_outcomes = {lo.id: lo for lo in await get_all_outcomes(db)}
@@ -56,3 +75,4 @@ async def build_training_pairs(db: AsyncSession = Depends(get_db)):
         "hard_negative_pairs": hard_neg_count,
         "export_path": "assets/training_pairs.jsonl" if pairs else None,
     }
+

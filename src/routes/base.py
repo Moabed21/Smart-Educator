@@ -1,3 +1,11 @@
+"""System & Health Check Routes.
+
+Provides observability and health monitoring endpoints:
+- GET /api/v1/ - API version and environment metadata
+- GET /api/v1/health - High-level process status
+- GET /api/v1/health/live - Fast container liveness probe (K8s/Docker)
+- GET /api/v1/health/ready - Deep readiness probe validating PostgreSQL, Redis, and ChromaDB
+"""
 import time
 from fastapi import APIRouter, Depends, status
 from fastapi.responses import JSONResponse
@@ -17,7 +25,13 @@ base_router = APIRouter(
 
 @base_router.get("/")
 async def api_info(settings: Settings = Depends(get_settings)):
-    """General API metadata."""
+    """
+    General API metadata.
+    
+    EXPLANATION:
+    - FastAPI Dependency Injection: `settings: Settings = Depends(get_settings)`
+      injects the cached application settings singleton into the handler function.
+    """
     return {
         "app": settings.APP_NAME,
         "version": settings.APP_VERSION,
@@ -38,7 +52,13 @@ async def get_health(settings: Settings = Depends(get_settings)):
 
 @base_router.get("/health/live")
 async def get_liveness():
-    """Kubernetes / Container liveness probe."""
+    """
+    Kubernetes / Docker container liveness probe.
+    
+    EXPLANATION:
+    - Liveness vs Readiness: A liveness probe checks ONLY if the web server process
+      is alive and responsive. If this fails, the container orchestrator restarts the container.
+    """
     return {"status": "alive"}
 
 
@@ -48,10 +68,17 @@ async def get_readiness(
     settings: Settings = Depends(get_settings),
 ):
     """
-    Comprehensive readiness probe verifying active connectivity to:
-    1. PostgreSQL database
-    2. Redis cache
-    3. ChromaDB vector database
+    Comprehensive readiness probe verifying active connectivity to all 3 stateful dependencies:
+    1. PostgreSQL relational database (via async SQL `SELECT 1`)
+    2. Redis cache (via non-blocking PING)
+    3. ChromaDB vector database (via heartbeat ping)
+    
+    EXPLANATION:
+    - A readiness probe checks if the service can actually handle real user traffic.
+    - If any dependency is down, returns HTTP 503 SERVICE UNAVAILABLE instead of HTTP 200,
+      signaling load balancers and orchestrators to route traffic away until healthy.
+    - Automatic Session Cleanup: `db: AsyncSession = Depends(get_db)` provides an isolated
+      session per request and closes it cleanly when the request finishes.
     """
     checks = {}
     is_ready = True

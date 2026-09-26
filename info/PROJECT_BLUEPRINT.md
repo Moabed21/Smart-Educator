@@ -103,15 +103,21 @@ Smart-Educator/
 │   ├── multi_lesson_sample.txt
 │   └── training_pairs.jsonl
 ├── docker/                    # Container orchestration
+│   ├── Dockerfile             # Single-stage fast production Docker image
 │   └── docker-compose.yml     # Multi-container stack (API, Postgres, Redis, ChromaDB)
+├── info/                      # Documentation and blueprint specifications
+│   ├── .env.example           # Template environment configuration
+│   ├── PROJECT_BLUEPRINT.md   # Unified system master blueprint (this file)
+│   ├── diagrams.drawio        # Architectural system diagrams (source)
+│   └── diagrams.png           # Rendered architectural diagram
 ├── migrations/                # Alembic database migrations
 │   ├── env.py                 # Async migration runner
 │   └── versions/              # Migration versions (001_initial_schema.py)
-├── tests/                     # Automated testing suite (28 tests)
+├── tests/                     # Automated testing suite (29 tests)
 │   ├── conftest.py            # Test engine fixtures with NullPool
 │   ├── test_api_endpoints.py  # Route and probe tests
 │   ├── test_evaluator.py      # 8-criteria scoring tests
-│   ├── test_multi_context.py  # Chunking and context isolation tests
+│   ├── test_multi_context_pipeline.py # Chunking and context isolation tests
 │   ├── test_pair_generator.py # Jaccard similarity & triplet pair tests
 │   └── test_schemas.py        # Pydantic validation tests
 ├── src/                       # Main application source
@@ -124,14 +130,12 @@ Smart-Educator/
 │   │   └── graph.py
 │   ├── helpers/               # Core infrastructure utilities
 │   │   ├── config.py          # Pydantic BaseSettings & env parsing
-│   │   ├── db.py              # Async connection pool & engine
+│   │   ├── db.py              # Async connection pool, engine & DeclarativeBase
 │   │   ├── hashing.py         # SHA-256 context hashing
 │   │   ├── logger.py          # Correlation ID (X-Request-ID) middleware
 │   │   ├── redis_client.py    # Async Redis cache client
-│   │   ├── security.py        # API key verification dependency
-│   │   └── storage.py         # Abstract storage interface
+│   │   └── security.py        # API key verification dependency
 │   ├── models/                # SQLAlchemy ORM database models
-│   │   ├── base.py
 │   │   ├── enums.py
 │   │   ├── evaluationResult.py
 │   │   ├── learningOutcome.py
@@ -145,8 +149,7 @@ Smart-Educator/
 │   │   ├── training_pairs.py  # /api/v1/training-pairs/build
 │   │   └── schemes/           # Pydantic request/response schemas
 │   ├── services/              # Core business & AI logic
-│   │   ├── document_service.py# PDF & text file processing
-│   │   ├── embedding_service.py# Gemini Embeddings API + Redis vector cache
+│   │   ├── embedding_service.py # Gemini Embeddings API + Redis vector cache
 │   │   ├── evaluator.py       # LLM-as-Judge 8-criteria evaluator
 │   │   ├── file_service.py    # File storage, validation & chunking
 │   │   ├── fine_tune.py       # Offline embedding fine-tuning script
@@ -160,11 +163,10 @@ Smart-Educator/
 │   │   └── index.html         # Interactive dashboard, generator & quiz studio
 │   ├── main.py                # Application entrypoint & middleware registration
 │   └── requirements.txt       # Streamlined production dependencies
-├── .env                       # Environment configuration
+├── .env                       # Local environment configuration
 ├── .gitignore
-├── Dockerfile                 # Single-stage fast production Docker image
 ├── alembic.ini                # Alembic migration configuration
-└── PROJECT_BLUEPRINT.md       # Master system blueprint (this file)
+└── README.md                  # Developer guide & architecture overview
 ```
 
 ---
