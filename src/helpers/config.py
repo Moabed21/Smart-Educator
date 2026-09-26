@@ -18,8 +18,7 @@ class Settings(BaseSettings):
     ENVIRONMENT: str = "development"
     LOG_LEVEL: str = "INFO"
 
-    # Security & Access Control
-    API_KEY: str | None = None
+    # Access Control
     CORS_ORIGINS: list[str] = ["*"]
 
     # File Ingestion Limits

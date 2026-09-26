@@ -28,9 +28,3 @@ async def get_db():
     """FastAPI Dependency providing an async session per request with automatic cleanup."""
     async with AsyncSessionLocal() as session:
         yield session
-
-
-async def create_tables():
-    """Programmatic schema creation helper — used for ephemeral test suites only."""
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)

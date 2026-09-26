@@ -34,21 +34,3 @@ async def get_links_by_question(db: AsyncSession, question_id) -> list[QuestionL
     )
     return result.scalars().all()
 
-
-async def get_links_by_lo(db: AsyncSession, lo_id) -> list[QuestionLOLink]:
-    """
-    Fetch all questions linked to a specific LO.
-    Used by training pair generation:
-    - Questions sharing the same LO → positive pairs
-    - Questions with different LOs → negative pairs
-    
-    EXPLANATION:
-    - Crucial for Contrastive Fine-Tuning: In fine_tune.py / pair_generator.py,
-      items addressing the identical LO are treated as semantically equivalent
-      (positive pairs), helping fine-tune embedding models for curriculum retrieval.
-    """
-    result = await db.execute(
-        select(QuestionLOLink).where(QuestionLOLink.lo_id == lo_id)
-    )
-    return result.scalars().all()
-

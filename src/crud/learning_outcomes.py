@@ -21,24 +21,6 @@ async def save_outcomes(db: AsyncSession, outcomes: list[LearningOutcome]) -> No
     await db.commit()
 
 
-async def get_outcomes_by_hash(db: AsyncSession, context_hash: str) -> list[LearningOutcome]:
-    """
-    Fetch all LOs for a given context hash.
-    Used to check if this context was already processed (idempotency).
-    Returns empty list if no match → triggers fresh Gemini extraction.
-    
-    EXPLANATION:
-    - Idempotency & Deduplication: `context_hash` is a SHA-256 fingerprint of
-      (passage + question_config). By checking the database before invoking Gemini,
-      we avoid duplicate AI calls and prevent redundant rows in the database.
-    - result.scalars().all(): Unpacks row objects into a Python list[LearningOutcome].
-    """
-    result = await db.execute(
-        select(LearningOutcome).where(LearningOutcome.context_hash == context_hash)
-    )
-    return result.scalars().all()
-
-
 async def get_all_outcomes(db: AsyncSession) -> list[LearningOutcome]:
     """
     Fetch all learning outcomes — used by dataset export and training pair building.

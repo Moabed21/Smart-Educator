@@ -13,7 +13,6 @@ conditional edge after `evaluate`, not by routes/dataset.py, which now only
 calls `run_pipeline()` and reports whatever the final state says was
 persisted/discarded.
 """
-import hashlib
 import logging
 from typing import TypedDict
 
@@ -24,6 +23,7 @@ from crud.evaluation_results import save_evaluations
 from crud.learning_outcomes import save_outcomes
 from crud.question_lo_links import save_links
 from crud.questions import save_questions
+from helpers.hashing import compute_context_hash
 from models.evaluationResult import EvaluationResult as EvaluationResultORM
 from models.learningOutcome import LearningOutcome as LearningOutcomeORM
 from models.questionL0Link import QuestionLOLink as QuestionLOLinkORM
@@ -40,18 +40,6 @@ from services.question_generator import generate_questions
 logger = logging.getLogger("server.graph")
 
 _KEEP_STATUSES = (EvaluationStatus.ACCEPTED, EvaluationStatus.NEEDS_REVIEW)
-
-
-def compute_context_hash(context: EducationalContext) -> str:
-    """sha256(passage + question_config) — used for the LO dedup column.
-
-    Single shared implementation (moved here from routes/dataset.py, which
-    used to duplicate this inline) — `parse_node` computes it once up front
-    and both this graph and any route can rely on `state["context_hash"]`
-    instead of recomputing it independently.
-    """
-    payload = context.passage + context.question_config.model_dump_json()
-    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
 
 class GraphState(TypedDict):

@@ -8,9 +8,8 @@ class QuestionWithLO:
     """
     Minimal representation of one (question, learning outcome) pairing —
     just enough to build training pairs from. Building a list of these from
-    real DB rows (via P1's get_links_by_lo / get_links_by_question CRUD
-    functions) is integration work for whoever wires this into the real
-    pipeline — not yet done here.
+    real DB rows (via get_links_by_question CRUD function) is
+    handled in routes/training_pairs.py.
     """
     question_id: str
     question_text: str

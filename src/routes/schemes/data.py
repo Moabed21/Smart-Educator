@@ -19,10 +19,8 @@ class ProcessRequest(BaseModel):
       Default is 100 chars (can be increased to 400-1000 for standard curriculum lessons).
     - overlap_size: Number of characters shared between adjacent chunks (sliding window).
       Prevents cutting sentences or key scientific concepts in half across chunk borders.
-    - do_reset: Optional flag for re-chunking or resetting cached chunks.
     """
     file_id: str
     chunk_size: Optional[int] = 100
     overlap_size: Optional[int] = 20
-    do_reset: Optional[int] = 0
 
